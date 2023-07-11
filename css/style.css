@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Anton', sans-serif;
+}
+
+body{
+    background-color: #E5E5E5;
+
+}
+
+header{
+    background-image:url(../images/bg-img.png);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 100vw;
+    height: 85vh;
+}
+
+.logo{
+    margin: 3em 4em;
+}
+
+.tagline{
+    width: 50vw;
+    margin: 15vh auto 0;
+    color: #FFD15B;
+    font-size: 44px;
+    text-align: center;
+
+}
+
+.searchbar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    border-radius: 1em;
+    width: 65vw;
+    height: 4.5em;
+    margin: 1.5em auto;
+
+}
+
+.searchbar input{
+    width: 100%;
+    margin-left: 3em;
+    height: 3em;
+    border: none;
+    font-family: 'Manrope', sans-serif;
+}
+
+.search-button{
+    text-align: center;
+    padding-top: 9px;
+    font-size: 2em;
+    color: white;
+    background: black;
+    border-radius: .3em;
+    height: 1.6em;
+    width: 7%;
+    margin: 10px;
+}
+
+.filters{
+    display: flex;
+    justify-content: space-between;
+    margin: 1em 3em;
+
+}
+ 
+
+.selection{
+    display: grid;
+    gap: 1em;
+    grid-template-columns:repeat(3, 10em);
+}
+
+.list{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    background-color: #fff;
+    padding: 10px;
+}
+
+.list button{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.list button:hover ~ .arrow{
+    transform-origin: center;
+    transform: rotate(180deg);
+}
+
+.list span{
+    font-family: 'Manrope', sans-serif;
+    font-weight: 500;
+}
+
+.list button{
+    border: none;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    background-color: inherit;
+}
+
+.list-items{
+    display: none;
+}
+
+.list-items > *{
+    margin: 5px 0;
+}
+
+.list button:hover ~ .list-items{
+    display: block;
+}
