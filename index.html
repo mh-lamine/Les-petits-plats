@@ -103,150 +103,167 @@
       <h1 class="tagline">
         CHERCHEZ PARMI PLUS DE 1500 RECETTES DU QUOTIDIEN,SIMPLES ET DÉLICIEUSES
       </h1>
-      <div class="searchbar">
+      <div class="main-searchbar">
         <input
           type="text"
           placeholder="Rechercher une recette, un ingrédient, ..."
+          class="search-input"
         />
+        <i class="fa-solid fa-xmark clear-button"></i>
         <i class="fa-solid fa-magnifying-glass search-button"></i>
       </div>
     </header>
-    <div class="filters">
-      <div class="selection">
-        <div class="list">
-          <button>
-            <span>Ingredients</span>
-            <svg
-              class="arrow"
-              width="15"
-              height="8"
-              viewBox="0 0 15 8"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M1 1L7.5 7L14 1"
-                stroke="#1B1B1B"
-                stroke-linecap="round"
-              />
-            </svg>
-          </button>
-          <div class="list-items">
-            <input type="text" />
-            <button value="Lait de coco">Lait de coco</button>
-            <button value="Jus de citron">Jus de citron</button>
-            <button value="Crème de coco">Crème de coco</button>
-            <button value="Glaçons">Glaçons</button>
-            <button value="Thon Rouge ou blanc">Thon Rouge (ou blanc)</button>
-            <button value="Concombre">Concombre</button>
-            <button value="Tomate">Tomate</button>
-            <button value="Carotte">Carotte</button>
-            <button value="Citron Vert">Citron Vert</button>
-            <button value="Poulet">Poulet</button>
-            <button value="Coulis de tomate">Coulis de tomate</button>
-            <button value="Oignon">Oignon</button>
-            <button value="Poivron rouge">Poivron rouge</button>
-            <button value="Huile d'olive">Huile d'olive</button>
-            <button value="Riz blanc">Riz blanc</button>
-            <button value="Thon en miettes">Thon en miettes</button>
-            <button value="Oeuf dur">Oeuf dur</button>
-            <button value="Maïs">Maïs</button>
-            <button value="Vinaigrette">Vinaigrette</button>
-            <button value="Pâte feuilletée">Pâte feuilletée</button>
-            <button value="Crème fraiche">Crème fraiche</button>
-            <button value="Gruyère râpé">Gruyère râpé</button>
-            <button value="Moutarde de Dijon">Moutarde de Dijon</button>
-            <button value="Pâte brisée">Pâte brisée</button>
-            <button value="Pomme">Pomme</button>
-            <button value="Oeuf">Oeuf</button>
-            <button value="Sucre en Poudre">Sucre en Poudre</button>
-            <button value="Sucre vanillé">Sucre vanillé</button>
-            <button value="Pâte sablée">Pâte sablée</button>
-          </div>
-        </div>
-        <div class="list">
-          <button>
-            <span>Appareils</span>
-            <svg
-              class="arrow"
-              width="15"
-              height="8"
-              viewBox="0 0 15 8"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M1 1L7.5 7L14 1"
-                stroke="#1B1B1B"
-                stroke-linecap="round"
-              />
-            </svg>
-          </button>
-          <div class="list-items">
-            <input type="text" />
-            <button value="Blender">Blender</button>
-            <button value="Saladier">Saladier</button>
-            <button value="Cocotte">Cocotte</button>
-            <button value="Cuiseur de riz">Cuiseur de riz</button>
-            <button value="Four">Four</button>
-            <button value="Casserolle">Casserolle</button>
-            <button value="Poële à crêpe">Poële à crêpe</button>
-            <button value="Sauteuse">Sauteuse</button>
-            <button value="Mixer">Mixer</button>
-            <button value="Poële">Poële</button>
-            <button value="Moule à charlotte">Moule à charlotte</button>
-            <button value="Cuillère à Soupe">Cuillère à Soupe</button>
-            <button value="Verres">Verres</button>
-            <button value="Presse citron">Presse citron</button>
-            <button value="Couteau">Couteau</button>
-            <button value="Passoire">Passoire</button>
-            <button value="Moule à tarte">Moule à tarte</button>
-            <button value="Râpe à fromage">Râpe à fromage</button>
-            <button value="Fourchette">Fourchette</button>
-            <button value="Moule à tartelettes (6)">
-              Moule à tartelettes (6)
+    <main>
+      <section class="filters">
+        <div class="selection">
+          <div class="list ingredients">
+            <button>
+              <span>Ingredients</span>
+              <svg
+                class="arrow"
+                width="15"
+                height="8"
+                viewBox="0 0 15 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 1L7.5 7L14 1"
+                  stroke="#1B1B1B"
+                  stroke-linecap="round"
+                />
+              </svg>
             </button>
+            <ul class="list-items">
+              <div class="searchbar">
+                <input type="text" />
+                <i class="fa-solid fa-xmark clear-button"></i>
+              </div>
+              <li value="Lait de coco">Lait de coco</li>
+              <li value="Jus de citron">Jus de citron</li>
+              <li value="Crème de coco">Crème de coco</li>
+              <li value="Glaçons">Glaçons</li>
+              <li value="Thon Rouge ou blanc">Thon Rouge (ou blanc)</li>
+              <li value="Concombre">Concombre</li>
+              <li value="Tomate">Tomate</li>
+              <li value="Carotte">Carotte</li>
+              <li value="Citron Vert">Citron Vert</li>
+              <li value="Poulet">Poulet</li>
+              <li value="Coulis de tomate">Coulis de tomate</li>
+              <li value="Oignon">Oignon</li>
+              <li value="Poivron rouge">Poivron rouge</li>
+              <li value="Huile d'olive">Huile d'olive</li>
+              <li value="Riz blanc">Riz blanc</li>
+              <li value="Thon en miettes">Thon en miettes</li>
+              <li value="Oeuf dur">Oeuf dur</li>
+              <li value="Maïs">Maïs</li>
+              <li value="Vinaigrette">Vinaigrette</li>
+              <li value="Pâte feuilletée">Pâte feuilletée</li>
+              <li value="Crème fraiche">Crème fraiche</li>
+              <li value="Gruyère râpé">Gruyère râpé</li>
+              <li value="Moutarde de Dijon">Moutarde de Dijon</li>
+              <li value="Pâte brisée">Pâte brisée</li>
+              <li value="Pomme">Pomme</li>
+              <li value="Oeuf">Oeuf</li>
+              <li value="Sucre en Poudre">Sucre en Poudre</li>
+              <li value="Sucre vanillé">Sucre vanillé</li>
+              <li value="Pâte sablée">Pâte sablée</li>
+            </ul>
+          </div>
+          <div class="list appareils">
+            <button>
+              <span>Appareils</span>
+              <svg
+                class="arrow"
+                width="15"
+                height="8"
+                viewBox="0 0 15 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 1L7.5 7L14 1"
+                  stroke="#1B1B1B"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
+            <div class="list-items">
+              <div class="searchbar">
+                <input type="text" />
+                <i class="fa-solid fa-xmark clear-button"></i>
+              </div>
+              <li value="Blender">Blender</li>
+              <li value="Saladier">Saladier</li>
+              <li value="Cocotte">Cocotte</li>
+              <li value="Cuiseur de riz">Cuiseur de riz</li>
+              <li value="Four">Four</li>
+              <li value="Casserolle">Casserolle</li>
+              <li value="Poële à crêpe">Poële à crêpe</li>
+              <li value="Sauteuse">Sauteuse</li>
+              <li value="Mixer">Mixer</li>
+              <li value="Poële">Poële</li>
+              <li value="Moule à charlotte">Moule à charlotte</li>
+              <li value="Cuillère à Soupe">Cuillère à Soupe</li>
+              <li value="Verres">Verres</li>
+              <li value="Presse citron">Presse citron</li>
+              <li value="Couteau">Couteau</li>
+              <li value="Passoire">Passoire</li>
+              <li value="Moule à tarte">Moule à tarte</li>
+              <li value="Râpe à fromage">Râpe à fromage</li>
+              <li value="Fourchette">Fourchette</li>
+              <li value="Moule à tartelettes (6)">Moule à tartelettes (6)</li>
+            </div>
+          </div>
+          <div class="list ustensils">
+            <button>
+              <span>Ustensils</span>
+              <svg
+                class="arrow"
+                width="15"
+                height="8"
+                viewBox="0 0 15 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 1L7.5 7L14 1"
+                  stroke="#1B1B1B"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
+            <div class="list-items">
+              <div class="searchbar">
+                <input type="text" />
+                <i class="fa-solid fa-xmark clear-button"></i>
+              </div>
+              <li value="Moule à gâteaux">Moule à gâteaux</li>
+              <li value="Cuillère en bois">Cuillère en bois</li>
+              <li value="Plat à gratin">Plat à gratin</li>
+              <li value="Économe">Économe</li>
+              <li value="Cuillère à melon">Cuillère à melon</li>
+              <li value="Poêle à frire">Poêle à frire</li>
+              <li value="Louche">Louche</li>
+              <li value="Fouet">Fouet</li>
+              <li value="Rouleau à pâtisserie">Rouleau à pâtisserie</li>
+              <li value="Plaque de cuisson">Plaque de cuisson</li>
+              <li value="Cocotte minute">Cocotte minute</li>
+              <li value="Bol">Bol</li>
+              <li value="Spatule">Spatule</li>
+              <li value="Moule">Moule</li>
+            </div>
           </div>
         </div>
-        <div class="list">
-          <button>
-            <span>Ustensils</span>
-            <svg
-              class="arrow"
-              width="15"
-              height="8"
-              viewBox="0 0 15 8"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M1 1L7.5 7L14 1"
-                stroke="#1B1B1B"
-                stroke-linecap="round"
-              />
-            </svg>
-          </button>
-          <div class="list-items">
-            <input type="text" />
-            <button value="Moule à gâteaux">Moule à gâteaux</button>
-            <button value="Cuillère en bois">Cuillère en bois</button>
-            <button value="Plat à gratin">Plat à gratin</button>
-            <button value="Économe">Économe</button>
-            <button value="Cuillère à melon">Cuillère à melon</button>
-            <button value="Poêle à frire">Poêle à frire</button>
-            <button value="Louche">Louche</button>
-            <button value="Fouet">Fouet</button>
-            <button value="Rouleau à pâtisserie">Rouleau à pâtisserie</button>
-            <button value="Plaque de cuisson">Plaque de cuisson</button>
-            <button value="Cocotte minute">Cocotte minute</button>
-            <button value="Bol">Bol</button>
-            <button value="Spatule">Spatule</button>
-            <button value="Moule">Moule</button>
-          </div>
-        </div>
-      </div>
-      <p>1500 recettes</p>
-    </div>
+        <p>1500 recettes</p>
+      </section>
+      <section class="selected">
+        <div class="ingredients"></div>
+        <div class="appareils"></div>
+        <div class="ustensils"></div>
+      </section>
+      <section class="recipes"></section>
+    </main>
     <script src="js/main.js"></script>
   </body>
 </html>
