@@ -16,29 +16,39 @@ function maxLength(text, maxLength) {
     });
 }
 
-function filterRecipes(recipes) {
+async function filterRecipes() {
+
+    let recipes = await getRecipes();
 
     let filteredRecipes = [];
 
-    document.querySelector(".search-button").addEventListener("click", () => {
+    let mainSearchbar = document.querySelector(".main-searchbar");
+
+    mainSearchbar.querySelector(".search-button").addEventListener("click", () => {
+        console.log('click')
         let filteredRecipes = [];
         let searchInput = document.querySelector(".search-input").value.toLowerCase();
-        for (let i = 0; i < recipes.length; i++) {
-            let recipeName = recipes[i].name.toLowerCase();
+        recipes.forEach(recipe => {
+            let recipeName = recipe.name.toLowerCase();
             if (recipeName.includes(searchInput)) {
-                filteredRecipes.push(recipes[i])
+                filteredRecipes.push(recipe)
             }
-        }
+        });
         document.querySelector(".recipes").innerHTML = "";
         displayRecipes(filteredRecipes)
+        return filteredRecipes
     })
 
-    /* 
-        branch le code, changer tous les foreach pour la version basique 
-        rechercher "supprimer un element dans une liste" pour les items
-        verbe + sur quoi ça s'applique = nom de fonction
-    */
+    mainSearchbar.querySelector(".clear-button").addEventListener("click", () => {
+        mainSearchbar.querySelector("input").value = "";
+        document.querySelector(".recipes").innerHTML = "";
+        displayRecipes(recipes)
+    })
+}
 
+async function filterWithItem() {
+    let recipes = await filterRecipes();
+    console.log(recipes)
 }
 
 function displayRecipes(recipes) {
@@ -95,7 +105,7 @@ function displayListItems(element){
 
 }
 
-function filterItems(element) {
+async function filterItems(element) {
     let input = element.querySelector("input");
     let items = element.querySelectorAll(".list-items li");
 
@@ -109,33 +119,40 @@ function filterItems(element) {
             } else {
                 item.style.display = "none";
             }
-
         });
     });
 
     items.forEach(item => {
         let elt = element.classList[1]; 
         let selected = document.querySelector(".selected ." + elt);
-        let filter = document.createElement("p");
-        filter.setAttribute("class", "filter")
+        let filter = document.createElement('p');
+        filter.className = 'filter';
         filter.dataset.click = 0;
         filter.innerHTML = `${item.innerText}<i class="fa-solid fa-xmark clear-filter"></i>`;
-        
+
         item.addEventListener("click", () => {
+
             if (filter.dataset.click == 0) {
-                selected.innerHTML += `<p class="filter">${item.innerText}<i class="fa-solid fa-xmark clear-filter"></i></p>`
-                let clearFilter = document.querySelector(".clear-filter");
+                selected.append(filter);
                 filter.dataset.click = 1;
-                clearFilter.addEventListener("click", () => {
-                    filter.remove()
+
+                // add to advancedFilters array
+
+                filter.querySelector(".clear-filter").addEventListener("click", () => {
+                    filter.style.display = "none";
                     filter.dataset.click = 0;
+
+                    // remove to advancedFilters array
+
                 });
-            } 
+            }
+
+            // return advancedFilters
+
         })
     });
 
-    let clearBtn = element.querySelector(".clear-button");
-    clearBtn.addEventListener("click", () => {
+    element.querySelector(".clear-button").addEventListener("click", () => {
         input.value = "";
         items.forEach(item => {
             let itemName = item.textContent.toLowerCase();
@@ -144,31 +161,31 @@ function filterItems(element) {
     })
 }
 
-function addClickEventToButton(element) {
-    element.querySelector("button").addEventListener("click", () => {
-      displayListItems(element);
-    });
-}
-
 async function init() {
-
     let recipes = await getRecipes();
 
     displayRecipes(recipes);
       
     let ingredients = document.querySelector(".ingredients");
-    addClickEventToButton(ingredients);
+    ingredients.querySelector("button").addEventListener("click", () => {
+        displayListItems(ingredients);
+      });
     filterItems(ingredients);
     
     let appareils = document.querySelector(".appareils");
-    addClickEventToButton(appareils);
+    appareils.querySelector("button").addEventListener("click", () => {
+        displayListItems(appareils);
+      });    
     filterItems(appareils);
     
     let ustensils = document.querySelector(".ustensils");
-    addClickEventToButton(ustensils);
+    ustensils.querySelector("button").addEventListener("click", () => {
+        displayListItems(ustensils);
+      });    
     filterItems(ustensils);
+
+    filterRecipes()
     
-    filterRecipes(recipes);
 }
 
 init();
