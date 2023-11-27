@@ -16,39 +16,19 @@ function maxLength(text, maxLength) {
     });
 }
 
-async function filterRecipes() {
-
+async function filterRecipes(searchInput) {
     let recipes = await getRecipes();
-
-    let filteredRecipes = [];
-
-    let mainSearchbar = document.querySelector(".main-searchbar");
-
-    mainSearchbar.querySelector(".search-button").addEventListener("click", () => {
-        console.log('click')
-        let filteredRecipes = [];
-        let searchInput = document.querySelector(".search-input").value.toLowerCase();
-        recipes.forEach(recipe => {
-            let recipeName = recipe.name.toLowerCase();
-            if (recipeName.includes(searchInput)) {
-                filteredRecipes.push(recipe)
-            }
-        });
-        document.querySelector(".recipes").innerHTML = "";
-        displayRecipes(filteredRecipes)
-        return filteredRecipes
-    })
-
-    mainSearchbar.querySelector(".clear-button").addEventListener("click", () => {
-        mainSearchbar.querySelector("input").value = "";
-        document.querySelector(".recipes").innerHTML = "";
-        displayRecipes(recipes)
-    })
+    let filteredRecipes = recipes.filter(recipe =>
+        recipe.name.toLowerCase().includes(searchInput));
+      
+    document.querySelector(".recipes").innerHTML = "";
+    displayRecipes(filteredRecipes)
+    return filteredRecipes
 }
 
-async function filterWithItem() {
+async function filterWithItem(advancedFilters) {
     let recipes = await filterRecipes();
-    console.log(recipes)
+    console.log('recipes')
 }
 
 function displayRecipes(recipes) {
@@ -105,7 +85,7 @@ function displayListItems(element){
 
 }
 
-async function filterItems(element) {
+function filterItems(element) {
     let input = element.querySelector("input");
     let items = element.querySelectorAll(".list-items li");
 
@@ -130,25 +110,29 @@ async function filterItems(element) {
         filter.dataset.click = 0;
         filter.innerHTML = `${item.innerText}<i class="fa-solid fa-xmark clear-filter"></i>`;
 
-        item.addEventListener("click", () => {
+        item.addEventListener("click", async () => {
+
+            item = item.innerText;
 
             if (filter.dataset.click == 0) {
                 selected.append(filter);
                 filter.dataset.click = 1;
 
                 // add to advancedFilters array
+                advancedFilters.push(item);
 
                 filter.querySelector(".clear-filter").addEventListener("click", () => {
                     filter.style.display = "none";
                     filter.dataset.click = 0;
 
                     // remove to advancedFilters array
+                    advancedFilters = advancedFilters.filter((items) => {
+                        return items != item
+                    })
 
                 });
             }
-
-            // return advancedFilters
-
+            await filterWithItem(advancedFilters)
         })
     });
 
@@ -163,6 +147,19 @@ async function filterItems(element) {
 
 async function init() {
     let recipes = await getRecipes();
+
+    let mainSearchbar = document.querySelector(".main-searchbar");
+    
+    mainSearchbar.querySelector(".search-button").addEventListener("click", async () => {
+        let searchInput = document.querySelector(".search-input").value.toLowerCase();
+        await filterRecipes(searchInput)
+    })
+
+    mainSearchbar.querySelector(".clear-button").addEventListener("click", () => {
+        mainSearchbar.querySelector("input").value = "";
+        document.querySelector(".recipes").innerHTML = "";
+        displayRecipes(recipes)
+    })
 
     displayRecipes(recipes);
       
@@ -183,9 +180,11 @@ async function init() {
         displayListItems(ustensils);
       });    
     filterItems(ustensils);
-
-    filterRecipes()
     
 }
+let advancedFilters = [];
 
 init();
+
+// eventlisteners dans le init
+// filter avec les items
