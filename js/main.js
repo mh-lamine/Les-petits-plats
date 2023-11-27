@@ -23,12 +23,21 @@ async function filterRecipes(searchInput) {
       
     document.querySelector(".recipes").innerHTML = "";
     displayRecipes(filteredRecipes)
-    return filteredRecipes
 }
 
 async function filterWithItem(advancedFilters) {
-    let recipes = await filterRecipes();
-    console.log('recipes')
+    let recipes = await getRecipes();
+    let filteredRecipes = []
+    advancedFilters.forEach(filter => {
+        recipes.forEach(recipe => {
+            recipe.ingredients.forEach(ingredient => {
+                if(ingredient.ingredient == filter || recipe.appliance == filter) {
+                    filteredRecipes.push(recipe)
+                }
+            })
+        });
+    });
+    console.log(filteredRecipes)
 }
 
 function displayRecipes(recipes) {
@@ -122,8 +131,7 @@ function filterItems(element) {
                 advancedFilters.push(item);
 
                 filter.querySelector(".clear-filter").addEventListener("click", () => {
-                    filter.style.display = "none";
-                    filter.dataset.click = 0;
+                    filter.remove()
 
                     // remove to advancedFilters array
                     advancedFilters = advancedFilters.filter((items) => {
@@ -147,7 +155,8 @@ function filterItems(element) {
 
 async function init() {
     let recipes = await getRecipes();
-
+    displayRecipes(recipes);
+    
     let mainSearchbar = document.querySelector(".main-searchbar");
     
     mainSearchbar.querySelector(".search-button").addEventListener("click", async () => {
@@ -161,8 +170,6 @@ async function init() {
         displayRecipes(recipes)
     })
 
-    displayRecipes(recipes);
-      
     let ingredients = document.querySelector(".ingredients");
     ingredients.querySelector("button").addEventListener("click", () => {
         displayListItems(ingredients);
