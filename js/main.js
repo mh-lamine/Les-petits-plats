@@ -25,19 +25,81 @@ async function filterRecipes(searchInput) {
     displayRecipes(filteredRecipes)
 }
 
+function filterWithIngredients(recipes, advancedFilters) {
+    return recipes.filter(recipe => {
+        return advancedFilters.every(filter => {
+            return recipe.ingredients.some(elem => elem.ingredient === filter);
+        });
+    });
+}
+
+function filterWithAppliances(recipes, advancedFilters) {
+    return recipes.filter(recipe =>
+        advancedFilters.includes(recipe.appliance)
+    );
+}
+
+function filterWithUstensils(recipes, advancedFilters) {
+    return recipes.filter(recipe =>
+        recipe.ustensils.some(ustensil =>
+            advancedFilters.includes(ustensil.toLowerCase())
+        )
+    );
+}
+
+// function filterWithIngredients(recipes, advancedFilters) {
+//     let filteredRecipes = []
+//     advancedFilters.forEach(filter => {
+//         recipes.forEach(recipe => {
+//             recipe.ingredients.forEach(elem => {
+//                 if (elem.ingredient == filter) {
+//                     filteredRecipes.push(recipe)
+//                 }
+//             });
+//         });
+//     });
+//     return filteredRecipes
+// }
+
+// function filterWithAppliances(recipes, advancedFilters) {
+//     let filteredRecipes = []
+//     advancedFilters.forEach(filter => {
+//         recipes.forEach(recipe => {
+//             if (recipe.appliance == filter) {
+//                 filteredRecipes.push(recipe)
+//             }
+//         });
+//     });
+//     return filteredRecipes
+// }
+
+// function filterWithUstensils(recipes) {
+//     let filteredRecipes = []
+//     advancedFilters.forEach(filter => {
+//         recipes.forEach(recipe => {
+//             recipe.ustensils.forEach(ustensil => {
+//                 if (ustensil == filter.toLowerCase()) {
+//                     filteredRecipes.push(recipe)
+//                 }
+//             });
+//         });
+//     });
+//     return filteredRecipes
+// }
+
 async function filterWithItem(advancedFilters) {
     let recipes = await getRecipes();
     let filteredRecipes = []
-    advancedFilters.forEach(filter => {
-        recipes.forEach(recipe => {
-            recipe.ingredients.forEach(ingredient => {
-                if(ingredient.ingredient == filter || recipe.appliance == filter) {
-                    filteredRecipes.push(recipe)
-                }
-            })
-        });
-    });
+    filteredRecipes.push(...filterWithIngredients(recipes, advancedFilters), ...filterWithAppliances(recipes, advancedFilters), ...filterWithUstensils(recipes, advancedFilters))
     console.log(filteredRecipes)
+
+    /*
+        comparer ingredients avec la liste des filtres
+        comparer appliances avec la liste des filtres
+        comparer ustensils avec la liste des filtres
+
+        filtrer les duplicates
+    */
 }
 
 function displayRecipes(recipes) {
