@@ -26,49 +26,55 @@ async function filterRecipes(searchInput) {
 }
 
 async function filterWithItem(advancedFilters) {
+    console.log(advancedFilters)
 
     let recipes = await getRecipes();
 
     const { ingredients, appliances, ustensils } = advancedFilters;
   
     const uniqueRecipeIds = new Set();
+    console.log(ingredients.length, appliances.length, ustensils.length)
   
-    const filteredRecipes = recipes.filter(recipe => {
-      // Check if at least one selected ingredient is present in the recipe
-      const hasIngredients = ingredients.some(selectedIngredient =>
-        recipe.ingredients.some(
-          recipeIngredient =>
-            recipeIngredient.ingredient.toLowerCase() ===
-            selectedIngredient.toLowerCase()
-        )
-      );
-  
-      // Check if the selected appliance is used in the recipe
-      const hasAppliance = appliances.includes(
-        recipe.appliance.toLowerCase()
-      );
-  
-      // Check if at least one selected utensil is used in the recipe
-      const hasUtensils = ustensils.some(selectedUtensil =>
-        recipe.ustensils.some(
-          recipeUtensil =>
-            recipeUtensil.toLowerCase() === selectedUtensil.toLowerCase()
-        )
-      );
-  
-      // Check if the recipe ID is unique and add it to the set
-      const isUnique = uniqueRecipeIds.has(recipe.id);
-      if (!isUnique) {
-        uniqueRecipeIds.add(recipe.id);
-      }
-  
-      // Return true if at least one of the criteria is met
-      return hasIngredients || hasAppliance || hasUtensils;
-    });
-  
-    console.log(filteredRecipes);
-    document.querySelector(".recipes").innerHTML = "";
-    displayRecipes(filteredRecipes)
+    if (ingredients.length || appliances.length || ustensils.length) {
+        const filteredRecipes = recipes.filter(recipe => {
+          // Check if at least one selected ingredient is present in the recipe
+          const hasIngredients = ingredients.some(selectedIngredient =>
+            recipe.ingredients.some(
+              recipeIngredient =>
+                recipeIngredient.ingredient.toLowerCase() ===
+                selectedIngredient.toLowerCase()
+            )
+          );
+      
+          // Check if the selected appliance is used in the recipe
+          const hasAppliance = appliances.includes(
+            recipe.appliance
+          );
+      
+          // Check if at least one selected utensil is used in the recipe
+          const hasUtensils = ustensils.some(selectedUtensil =>
+            recipe.ustensils.some(
+              recipeUtensil =>
+                recipeUtensil.toLowerCase() === selectedUtensil.toLowerCase()
+            )
+          );
+      
+          // Check if the recipe ID is unique and add it to the set
+          const isUnique = uniqueRecipeIds.has(recipe.id);
+          if (!isUnique) {
+            uniqueRecipeIds.add(recipe.id);
+          }
+      
+          // Return true if at least one of the criteria is met
+          return hasIngredients || hasAppliance || hasUtensils;
+        });
+
+        document.querySelector(".recipes").innerHTML = "";
+        displayRecipes(filteredRecipes)
+    } else {
+        document.querySelector(".recipes").innerHTML = "";
+        displayRecipes(recipes)
+    }
 }
 
 function displayRecipes(recipes) {
@@ -122,11 +128,18 @@ function displayListItems(element){
         arrow.style.transformOrigin = "center";
         arrow.style.transform = "rotate(180deg)";
     }
-
 }
 
 function addFilter(elt, item) {
     advancedFilters[elt].push(item)
+}
+
+function removeFilter(advancedFilters, item) {
+    for (const category in advancedFilters) {
+        advancedFilters[category] = advancedFilters[category].filter(
+            (filter) => filter !== item
+        );
+    }
 }
 
 function filterItems(element) {
@@ -155,6 +168,7 @@ function filterItems(element) {
         filter.innerHTML = `${item.innerText}<i class="fa-solid fa-xmark clear-filter"></i>`;
 
         item.addEventListener("click", () => {
+            console.log(item)
 
             item = item.innerText;
 
@@ -167,13 +181,12 @@ function filterItems(element) {
                 filterWithItem(advancedFilters)
 
                 filter.querySelector(".clear-filter").addEventListener("click", () => {
-                    filter.remove()
+                filter.dataset.click = 0;
+                filter.remove()
 
-                    // remove to advancedFilters array
-                    advancedFilters = advancedFilters.filter((items) => {
-                        return items != item
-                    })
-
+                    // remove from advancedFilters array
+                    removeFilter(advancedFilters, item)
+                    filterWithItem(advancedFilters)
                 });
             }
         })
@@ -228,5 +241,6 @@ let advancedFilters = {ingredients: [], appliances: [], ustensils: []};
 
 init();
 
-// eventlisteners dans le init
-// filter avec les items
+/* TODO:
+- remove filter
+*/ 
