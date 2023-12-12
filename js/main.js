@@ -25,81 +25,50 @@ async function filterRecipes(searchInput) {
     displayRecipes(filteredRecipes)
 }
 
-function filterWithIngredients(recipes, advancedFilters) {
-    return recipes.filter(recipe => {
-        return advancedFilters.every(filter => {
-            return recipe.ingredients.some(elem => elem.ingredient === filter);
-        });
-    });
-}
-
-function filterWithAppliances(recipes, advancedFilters) {
-    return recipes.filter(recipe =>
-        advancedFilters.includes(recipe.appliance)
-    );
-}
-
-function filterWithUstensils(recipes, advancedFilters) {
-    return recipes.filter(recipe =>
-        recipe.ustensils.some(ustensil =>
-            advancedFilters.includes(ustensil.toLowerCase())
-        )
-    );
-}
-
-// function filterWithIngredients(recipes, advancedFilters) {
-//     let filteredRecipes = []
-//     advancedFilters.forEach(filter => {
-//         recipes.forEach(recipe => {
-//             recipe.ingredients.forEach(elem => {
-//                 if (elem.ingredient == filter) {
-//                     filteredRecipes.push(recipe)
-//                 }
-//             });
-//         });
-//     });
-//     return filteredRecipes
-// }
-
-// function filterWithAppliances(recipes, advancedFilters) {
-//     let filteredRecipes = []
-//     advancedFilters.forEach(filter => {
-//         recipes.forEach(recipe => {
-//             if (recipe.appliance == filter) {
-//                 filteredRecipes.push(recipe)
-//             }
-//         });
-//     });
-//     return filteredRecipes
-// }
-
-// function filterWithUstensils(recipes) {
-//     let filteredRecipes = []
-//     advancedFilters.forEach(filter => {
-//         recipes.forEach(recipe => {
-//             recipe.ustensils.forEach(ustensil => {
-//                 if (ustensil == filter.toLowerCase()) {
-//                     filteredRecipes.push(recipe)
-//                 }
-//             });
-//         });
-//     });
-//     return filteredRecipes
-// }
-
 async function filterWithItem(advancedFilters) {
+
     let recipes = await getRecipes();
-    let filteredRecipes = []
-    filteredRecipes.push(...filterWithIngredients(recipes, advancedFilters), ...filterWithAppliances(recipes, advancedFilters), ...filterWithUstensils(recipes, advancedFilters))
-    console.log(filteredRecipes)
 
-    /*
-        comparer ingredients avec la liste des filtres
-        comparer appliances avec la liste des filtres
-        comparer ustensils avec la liste des filtres
-
-        filtrer les duplicates
-    */
+    const { ingredients, appliances, ustensils } = advancedFilters;
+  
+    const uniqueRecipeIds = new Set();
+  
+    const filteredRecipes = recipes.filter(recipe => {
+      // Check if at least one selected ingredient is present in the recipe
+      const hasIngredients = ingredients.some(selectedIngredient =>
+        recipe.ingredients.some(
+          recipeIngredient =>
+            recipeIngredient.ingredient.toLowerCase() ===
+            selectedIngredient.toLowerCase()
+        )
+      );
+  
+      // Check if the selected appliance is used in the recipe
+      const hasAppliance = appliances.includes(
+        recipe.appliance.toLowerCase()
+      );
+  
+      // Check if at least one selected utensil is used in the recipe
+      const hasUtensils = ustensils.some(selectedUtensil =>
+        recipe.ustensils.some(
+          recipeUtensil =>
+            recipeUtensil.toLowerCase() === selectedUtensil.toLowerCase()
+        )
+      );
+  
+      // Check if the recipe ID is unique and add it to the set
+      const isUnique = uniqueRecipeIds.has(recipe.id);
+      if (!isUnique) {
+        uniqueRecipeIds.add(recipe.id);
+      }
+  
+      // Return true if at least one of the criteria is met
+      return hasIngredients || hasAppliance || hasUtensils;
+    });
+  
+    console.log(filteredRecipes);
+    document.querySelector(".recipes").innerHTML = "";
+    displayRecipes(filteredRecipes)
 }
 
 function displayRecipes(recipes) {
@@ -156,6 +125,10 @@ function displayListItems(element){
 
 }
 
+function addFilter(elt, item) {
+    advancedFilters[elt].push(item)
+}
+
 function filterItems(element) {
     let input = element.querySelector("input");
     let items = element.querySelectorAll(".list-items li");
@@ -181,7 +154,7 @@ function filterItems(element) {
         filter.dataset.click = 0;
         filter.innerHTML = `${item.innerText}<i class="fa-solid fa-xmark clear-filter"></i>`;
 
-        item.addEventListener("click", async () => {
+        item.addEventListener("click", () => {
 
             item = item.innerText;
 
@@ -190,7 +163,8 @@ function filterItems(element) {
                 filter.dataset.click = 1;
 
                 // add to advancedFilters array
-                advancedFilters.push(item);
+                addFilter(elt, item)
+                filterWithItem(advancedFilters)
 
                 filter.querySelector(".clear-filter").addEventListener("click", () => {
                     filter.remove()
@@ -202,7 +176,6 @@ function filterItems(element) {
 
                 });
             }
-            await filterWithItem(advancedFilters)
         })
     });
 
@@ -238,11 +211,11 @@ async function init() {
       });
     filterItems(ingredients);
     
-    let appareils = document.querySelector(".appareils");
-    appareils.querySelector("button").addEventListener("click", () => {
-        displayListItems(appareils);
+    let appliances = document.querySelector(".appliances");
+    appliances.querySelector("button").addEventListener("click", () => {
+        displayListItems(appliances);
       });    
-    filterItems(appareils);
+    filterItems(appliances);
     
     let ustensils = document.querySelector(".ustensils");
     ustensils.querySelector("button").addEventListener("click", () => {
@@ -251,7 +224,7 @@ async function init() {
     filterItems(ustensils);
     
 }
-let advancedFilters = [];
+let advancedFilters = {ingredients: [], appliances: [], ustensils: []};
 
 init();
 
