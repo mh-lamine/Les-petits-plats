@@ -29,7 +29,7 @@ async function filterRecipes(searchInput) {
 
 async function filterWithItem(advancedFilters) {
 
-    let recipes = await getRecipes();
+    let recipes = await filterRecipes();
 
     const { ingredients, appliances, ustensils } = advancedFilters;
   
@@ -37,8 +37,8 @@ async function filterWithItem(advancedFilters) {
     console.log(ingredients.length, appliances.length, ustensils.length)
   
     if (ingredients.length || appliances.length || ustensils.length) {
-        const filteredRecipes = recipes.filter(recipe => {
-          // Check if at least one selected ingredient is present in the recipe
+        let filteredRecipes = filteredRecipes.filter(recipe => {
+
           const hasIngredients = ingredients.some(selectedIngredient =>
             recipe.ingredients.some(
               recipeIngredient =>
@@ -47,12 +47,10 @@ async function filterWithItem(advancedFilters) {
             )
           );
       
-          // Check if the selected appliance is used in the recipe
           const hasAppliance = appliances.includes(
             recipe.appliance
           );
       
-          // Check if at least one selected utensil is used in the recipe
           const hasUtensils = ustensils.some(selectedUtensil =>
             recipe.ustensils.some(
               recipeUtensil =>
@@ -60,13 +58,11 @@ async function filterWithItem(advancedFilters) {
             )
           );
       
-          // Check if the recipe ID is unique and add it to the set
           const isUnique = uniqueRecipeIds.has(recipe.id);
           if (!isUnique) {
             uniqueRecipeIds.add(recipe.id);
           }
       
-          // Return true if at least one of the criteria is met
           return hasIngredients || hasAppliance || hasUtensils;
         });
 
@@ -152,10 +148,12 @@ function filterItems(element) {
         
         items.forEach(item => {
             let itemName = item.textContent.toLowerCase();
-            if (itemName.includes(search)) {
-                item.style.display = "block";
+            let show = itemName.includes(search);
+        
+            if (show) {
+                item.classList.remove('hidden');
             } else {
-                item.style.display = "none";
+                item.classList.add('hidden');
             }
         });
     });
@@ -238,6 +236,8 @@ async function init() {
     filterItems(ustensils);
     
 }
+
+let filteredRecipes = [];
 let advancedFilters = {ingredients: [], appliances: [], ustensils: []};
 
 init();
