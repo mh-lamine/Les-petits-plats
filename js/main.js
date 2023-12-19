@@ -17,16 +17,17 @@ function maxLength(text, maxLength) {
 }
 
 async function filterRecipes(searchInput) {
-    let recipes = await getRecipes();
-    let filteredRecipes = recipes.filter(recipe =>
-        recipe.name.toLowerCase().includes(searchInput));
-      
-    document.querySelector(".recipes").innerHTML = "";
-    displayRecipes(filteredRecipes)
+    if(searchInput.length > 2) {
+        let recipes = await getRecipes();
+        let filteredRecipes = recipes.filter(recipe =>
+            recipe.name.toLowerCase().includes(searchInput.toLowerCase()) || recipe.description.toLowerCase().includes(searchInput.toLowerCase()) || recipe.ingredients.some(ingredient => ingredient.ingredient.toLowerCase().includes(searchInput.toLowerCase()) ));
+        console.log(filteredRecipes)
+        document.querySelector(".recipes").innerHTML = "";
+        displayRecipes(filteredRecipes)
+    }
 }
 
 async function filterWithItem(advancedFilters) {
-    console.log(advancedFilters)
 
     let recipes = await getRecipes();
 
@@ -240,7 +241,3 @@ async function init() {
 let advancedFilters = {ingredients: [], appliances: [], ustensils: []};
 
 init();
-
-/* TODO:
-- remove filter
-*/ 
