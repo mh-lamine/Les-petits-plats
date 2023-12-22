@@ -16,63 +16,52 @@ function maxLength(text, maxLength) {
     });
 }
 
-async function filterRecipes(searchInput) {
-    if(searchInput.length > 2) {
+async function filterRecipes(searchInput, advancedFilters) {
+    if (searchInput.length > 2) {
         let recipes = await getRecipes();
+
         let filteredRecipes = recipes.filter(recipe =>
-            recipe.name.toLowerCase().includes(searchInput.toLowerCase()) || recipe.description.toLowerCase().includes(searchInput.toLowerCase()) || recipe.ingredients.some(ingredient => ingredient.ingredient.toLowerCase().includes(searchInput.toLowerCase()) ));
-        console.log(filteredRecipes)
+            recipe.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+            recipe.description.toLowerCase().includes(searchInput.toLowerCase()) ||
+            recipe.ingredients.some(ingredient => ingredient.ingredient.toLowerCase().includes(searchInput.toLowerCase()))
+        );
+    
+        const { ingredients, appliances, ustensils } = advancedFilters;
+    
+        if (ingredients.length || appliances.length || ustensils.length) {
+            const uniqueRecipeIds = new Set();
+    
+            filteredRecipes = filteredRecipes.filter(recipe => {
+                const hasIngredients = ingredients.some(selectedIngredient =>
+                    recipe.ingredients.some(
+                        recipeIngredient =>
+                            recipeIngredient.ingredient.toLowerCase() === selectedIngredient.toLowerCase()
+                    )
+                );
+    
+                const hasAppliance = appliances.includes(recipe.appliance);
+    
+                const hasUtensils = ustensils.some(selectedUtensil =>
+                    recipe.ustensils.some(
+                        recipeUtensil =>
+                            recipeUtensil.toLowerCase() === selectedUtensil.toLowerCase()
+                    )
+                );
+    
+                const isUnique = uniqueRecipeIds.has(recipe.id);
+                if (!isUnique) {
+                    uniqueRecipeIds.add(recipe.id);
+                }
+    
+                return hasIngredients || hasAppliance || hasUtensils;
+            });
+        }
+    
         document.querySelector(".recipes").innerHTML = "";
-        displayRecipes(filteredRecipes)
-    }
+        displayRecipes(filteredRecipes);
+    }   
 }
 
-async function filterWithItem(advancedFilters) {
-
-    let recipes = await filterRecipes();
-
-    const { ingredients, appliances, ustensils } = advancedFilters;
-  
-    const uniqueRecipeIds = new Set();
-    console.log(ingredients.length, appliances.length, ustensils.length)
-  
-    if (ingredients.length || appliances.length || ustensils.length) {
-        let filteredRecipes = filteredRecipes.filter(recipe => {
-
-          const hasIngredients = ingredients.some(selectedIngredient =>
-            recipe.ingredients.some(
-              recipeIngredient =>
-                recipeIngredient.ingredient.toLowerCase() ===
-                selectedIngredient.toLowerCase()
-            )
-          );
-      
-          const hasAppliance = appliances.includes(
-            recipe.appliance
-          );
-      
-          const hasUtensils = ustensils.some(selectedUtensil =>
-            recipe.ustensils.some(
-              recipeUtensil =>
-                recipeUtensil.toLowerCase() === selectedUtensil.toLowerCase()
-            )
-          );
-      
-          const isUnique = uniqueRecipeIds.has(recipe.id);
-          if (!isUnique) {
-            uniqueRecipeIds.add(recipe.id);
-          }
-      
-          return hasIngredients || hasAppliance || hasUtensils;
-        });
-
-        document.querySelector(".recipes").innerHTML = "";
-        displayRecipes(filteredRecipes)
-    } else {
-        document.querySelector(".recipes").innerHTML = "";
-        displayRecipes(recipes)
-    }
-}
 
 function displayRecipes(recipes) {
 
@@ -166,8 +155,7 @@ function filterItems(element) {
         filter.dataset.click = 0;
         filter.innerHTML = `${item.innerText}<i class="fa-solid fa-xmark clear-filter"></i>`;
 
-        item.addEventListener("click", () => {
-            console.log(item)
+        item.addEventListener("click", async () => {
 
             item = item.innerText;
 
@@ -177,15 +165,17 @@ function filterItems(element) {
 
                 // add to advancedFilters array
                 addFilter(elt, item)
-                filterWithItem(advancedFilters)
+                let searchInput = document.querySelector(".search-input").value.toLowerCase();
+                await filterRecipes(searchInput, advancedFilters)
 
-                filter.querySelector(".clear-filter").addEventListener("click", () => {
+                filter.querySelector(".clear-filter").addEventListener("click", async () => {
                 filter.dataset.click = 0;
                 filter.remove()
 
                     // remove from advancedFilters array
                     removeFilter(advancedFilters, item)
-                    filterWithItem(advancedFilters)
+                    let searchInput = document.querySelector(".search-input").value.toLowerCase();
+                    await filterRecipes(searchInput, advancedFilters)
                 });
             }
         })
@@ -208,7 +198,7 @@ async function init() {
     
     mainSearchbar.querySelector(".search-button").addEventListener("click", async () => {
         let searchInput = document.querySelector(".search-input").value.toLowerCase();
-        await filterRecipes(searchInput)
+        await filterRecipes(searchInput, advancedFilters)
     })
 
     mainSearchbar.querySelector(".clear-button").addEventListener("click", () => {
@@ -237,7 +227,6 @@ async function init() {
     
 }
 
-let filteredRecipes = [];
 let advancedFilters = {ingredients: [], appliances: [], ustensils: []};
 
 init();
