@@ -163,7 +163,6 @@ function filterItems(element) {
                 selected.append(filter);
                 filter.dataset.click = 1;
 
-                // add to advancedFilters array
                 addFilter(elt, item)
                 let searchInput = document.querySelector(".search-input").value.toLowerCase();
                 await filterRecipes(searchInput, advancedFilters)
@@ -172,7 +171,6 @@ function filterItems(element) {
                 filter.dataset.click = 0;
                 filter.remove()
 
-                    // remove from advancedFilters array
                     removeFilter(advancedFilters, item)
                     let searchInput = document.querySelector(".search-input").value.toLowerCase();
                     await filterRecipes(searchInput, advancedFilters)
