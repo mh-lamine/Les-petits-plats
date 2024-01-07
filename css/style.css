@@ -242,3 +242,13 @@ main{
 .hidden {
     display: none;
 }
+
+.no-recipe{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    color: #7A7A7A;
+}
