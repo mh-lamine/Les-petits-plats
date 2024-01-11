@@ -17,84 +17,63 @@ function maxLength(text, maxLength) {
 }
 
 function filterListItems(recipes) {
-    let ingredients = document.querySelectorAll(".ingredients .list-items li");
-    let appliances = document.querySelectorAll(".appliances .list-items li");
-    let ustensils = document.querySelectorAll(".ustensils .list-items li");
-  
-    for (let i = 0; i < ingredients.length; i++) {
-      let ingredient = ingredients[i];
-      let ingredientName = ingredient.textContent.toLowerCase();
-      let show = false;
-  
-      for (let j = 0; j < recipes.length; j++) {
-        let recipe = recipes[j];
-        for (let k = 0; k < recipe.ingredients.length; k++) {
-          let recipeIngredient = recipe.ingredients[k];
-          let recipeIngredientName = recipeIngredient.ingredient.toLowerCase();
-          if (ingredientName === recipeIngredientName) {
-            show = true;
-            break;
-          }
-        }
-      }
-  
-      if (show) {
-        ingredient.classList.remove("hidden");
-      } else {
-        ingredient.classList.add("hidden");
-      }
-    }
-  
-    for (let i = 0; i < appliances.length; i++) {
-      let appliance = appliances[i];
-      let applianceName = appliance.textContent.toLowerCase();
-      let show = false;
-  
-      for (let j = 0; j < recipes.length; j++) {
-        let recipe = recipes[j];
-        let recipeAppliance = recipe.appliance.toLowerCase();
-        if (applianceName === recipeAppliance) {
-          show = true;
-          break;
-        }
-      }
-  
-      if (show) {
-        appliance.classList.remove("hidden");
-      } else {
-        appliance.classList.add("hidden");
-      }
-    }
-  
-    for (let i = 0; i < ustensils.length; i++) {
-      let utensil = ustensils[i];
-      let utensilName = utensil.textContent.toLowerCase();
-      let show = false;
-  
-      for (let j = 0; j < recipes.length; j++) {
-        let recipe = recipes[j];
-        for (let k = 0; k < recipe.ustensils.length; k++) {
-          let recipeUtensil = recipe.ustensils[k].toLowerCase();
-          if (utensilName === recipeUtensil) {
-            show = true;
-            break;
-          }
-        }
-      }
-  
-      if (show) {
-        utensil.classList.remove("hidden");
-      } else {
-        utensil.classList.add("hidden");
-      }
-    }
-  }
+  let ingredients = document.querySelectorAll(".ingredients .list-items li");
+  let appliances = document.querySelectorAll(".appliances .list-items li");
+  let ustensils = document.querySelectorAll(".ustensils .list-items li");
 
-async function filterRecipes(searchInput, advancedFilters) {
+  ingredients.forEach((ingredient) => {
+    let ingredientName = ingredient.textContent.toLowerCase();
+
+    let show = recipes.some((recipe) =>
+      recipe.ingredients.some(
+        (recipeIngredient) =>
+          recipeIngredient.ingredient.toLowerCase() === ingredientName
+      )
+    );
+
+    if (show) {
+      ingredient.classList.remove("hidden");
+    } else {
+      ingredient.classList.add("hidden");
+    }
+  });
+
+  appliances.forEach((appliance) => {
+    let applianceName = appliance.textContent.toLowerCase();
+
+    let show = recipes.some(
+      (recipe) => recipe.appliance.toLowerCase() === applianceName
+    );
+
+    if (show) {
+      appliance.classList.remove("hidden");
+    } else {
+      appliance.classList.add("hidden");
+    }
+  });
+
+  ustensils.forEach((utensil) => {
+    let utensilName = utensil.textContent.toLowerCase();
+
+    let show = recipes.some((recipe) =>
+      recipe.ustensils.some(
+        (recipeUtensil) => recipeUtensil.toLowerCase() === utensilName
+      )
+    );
+
+    if (show) {
+      utensil.classList.remove("hidden");
+    } else {
+      utensil.classList.add("hidden");
+    }
+  });
+}
+
+async function filterRecipes(searchInput, advancedFilters, isAdvancedSearch) {
   if (searchInput.length > 2) {
-    let recipes = await getRecipes();
-
-    let filteredRecipes = recipes.filter(
+    let recipes = isAdvancedSearch ? filteredRecipes : await getRecipes();
+    console.log(recipes, advancedFilters);
+    filteredRecipes = recipes.filter(
       (recipe) =>
         recipe.name.toLowerCase().includes(searchInput.toLowerCase()) ||
         recipe.description.toLowerCase().includes(searchInput.toLowerCase()) ||
@@ -119,27 +98,34 @@ async function filterRecipes(searchInput, advancedFilters) {
           )
         );
 
-        const hasAppliance = appliances.includes(recipe.appliance);
+        const hasAppliance = false;
+        // appliances.some((selectedAppliance) =>
+        //   filteredRecipes.some((recipe) => {
+        //     recipe.appliance.toLowerCase() === selectedAppliance.toLowerCase();
+        //   })
+        // );
 
-        const hasUtensils = ustensils.some((selectedUtensil) =>
+        const hasUstensils = ustensils.some((selectedUtensil) =>
           recipe.ustensils.some(
             (recipeUtensil) =>
               recipeUtensil.toLowerCase() === selectedUtensil.toLowerCase()
           )
         );
+        console.log(hasIngredients, hasAppliance, hasUstensils);
 
         const isUnique = uniqueRecipeIds.has(recipe.id);
         if (!isUnique) {
           uniqueRecipeIds.add(recipe.id);
         }
 
-        return hasIngredients || hasAppliance || hasUtensils;
+        return hasIngredients || hasAppliance || hasUstensils;
       });
     }
 
     document.querySelector(".recipes").innerHTML = "";
     displayRecipes(filteredRecipes);
     filterListItems(filteredRecipes);
+    console.log(filteredRecipes);
   }
 }
 
@@ -249,7 +235,7 @@ function filterItems(element) {
         let searchInput = document
           .querySelector(".search-input")
           .value.toLowerCase();
-        await filterRecipes(searchInput, advancedFilters);
+        await filterRecipes(searchInput, advancedFilters, true);
 
         filter
           .querySelector(".clear-filter")
@@ -261,7 +247,7 @@ function filterItems(element) {
             let searchInput = document
               .querySelector(".search-input")
               .value.toLowerCase();
-            await filterRecipes(searchInput, advancedFilters);
+            await filterRecipes(searchInput, advancedFilters, false);
           });
       }
     });
@@ -288,7 +274,7 @@ async function init() {
       let searchInput = document
         .querySelector(".search-input")
         .value.toLowerCase();
-      await filterRecipes(searchInput, advancedFilters);
+      await filterRecipes(searchInput, advancedFilters, false);
     });
 
   mainSearchbar.querySelector(".clear-button").addEventListener("click", () => {
@@ -319,3 +305,5 @@ async function init() {
 let advancedFilters = { ingredients: [], appliances: [], ustensils: [] };
 
 init();
+
+let filteredRecipes = undefined;
