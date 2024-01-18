@@ -71,9 +71,9 @@ function filterListItems(recipes) {
 
 async function filterRecipes(searchInput, advancedFilters, isAdvancedSearch) {
   if (searchInput.length > 2) {
-    let recipes = isAdvancedSearch ? filteredRecipes : await getRecipes();
-    console.log(recipes, advancedFilters);
-    filteredRecipes = recipes.filter(
+    // let recipes = isAdvancedSearch ? filteredRecipes : await getRecipes();
+    let recipes = await getRecipes();
+    let filteredRecipes = recipes.filter(
       (recipe) =>
         recipe.name.toLowerCase().includes(searchInput.toLowerCase()) ||
         recipe.description.toLowerCase().includes(searchInput.toLowerCase()) ||
@@ -87,6 +87,7 @@ async function filterRecipes(searchInput, advancedFilters, isAdvancedSearch) {
     const { ingredients, appliances, ustensils } = advancedFilters;
 
     if (ingredients.length || appliances.length || ustensils.length) {
+      console.log(ingredients, appliances, ustensils);
       const uniqueRecipeIds = new Set();
 
       filteredRecipes = filteredRecipes.filter((recipe) => {
@@ -97,13 +98,18 @@ async function filterRecipes(searchInput, advancedFilters, isAdvancedSearch) {
               selectedIngredient.toLowerCase()
           )
         );
+        if (!hasIngredients) {
+          return true;
+        }
 
-        const hasAppliance = false;
-        // appliances.some((selectedAppliance) =>
-        //   filteredRecipes.some((recipe) => {
-        //     recipe.appliance.toLowerCase() === selectedAppliance.toLowerCase();
-        //   })
-        // );
+        
+        const hasAppliance = appliances.some(
+          (selectedAppliance) =>
+            recipe.appliance.toLowerCase() === selectedAppliance.toLowerCase()
+        );
+        if (!hasAppliance) {
+          return true;
+        }
 
         const hasUstensils = ustensils.some((selectedUtensil) =>
           recipe.ustensils.some(
@@ -111,12 +117,16 @@ async function filterRecipes(searchInput, advancedFilters, isAdvancedSearch) {
               recipeUtensil.toLowerCase() === selectedUtensil.toLowerCase()
           )
         );
-        console.log(hasIngredients, hasAppliance, hasUstensils);
+        if (!hasUstensils) {
+          return true;
+        }
 
         const isUnique = uniqueRecipeIds.has(recipe.id);
         if (!isUnique) {
           uniqueRecipeIds.add(recipe.id);
         }
+
+        // si il n'y a pas de filtre selectionné, alors c'est vrai par defaut
 
         return hasIngredients || hasAppliance || hasUstensils;
       });
@@ -125,7 +135,6 @@ async function filterRecipes(searchInput, advancedFilters, isAdvancedSearch) {
     document.querySelector(".recipes").innerHTML = "";
     displayRecipes(filteredRecipes);
     filterListItems(filteredRecipes);
-    console.log(filteredRecipes);
   }
 }
 
@@ -305,5 +314,3 @@ async function init() {
 let advancedFilters = { ingredients: [], appliances: [], ustensils: [] };
 
 init();
-
-let filteredRecipes = undefined;
