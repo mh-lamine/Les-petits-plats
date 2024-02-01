@@ -69,67 +69,69 @@ function filterListItems(recipes) {
   });
 }
 
-async function filterRecipes(searchInput, advancedFilters, isAdvancedSearch) {
-  if (searchInput.length > 2) {
-    // let recipes = isAdvancedSearch ? filteredRecipes : await getRecipes();
-    let recipes = await getRecipes();
-    let filteredRecipes = recipes.filter(
-      (recipe) =>
-        recipe.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-        recipe.description.toLowerCase().includes(searchInput.toLowerCase()) ||
-        recipe.ingredients.some((ingredient) =>
-          ingredient.ingredient
-            .toLowerCase()
-            .includes(searchInput.toLowerCase())
+async function filterWithSearchbar(searchInput) {
+  let recipes = await getRecipes();
+
+  let filteredRecipes = recipes.filter(
+    (recipe) =>
+      recipe.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+      recipe.description.toLowerCase().includes(searchInput.toLowerCase()) ||
+      recipe.ingredients.some((ingredient) =>
+        ingredient.ingredient.toLowerCase().includes(searchInput.toLowerCase())
+      )
+  );
+  return filteredRecipes;
+}
+
+async function filterWithItems(recipes) {
+  const { ingredients, appliances, ustensils } = advancedFilters;
+  let filteredRecipes = [];
+  recipes.forEach((recipe) => {
+    let hasIngredients = true;
+    if (ingredients.length) {
+      hasIngredients = ingredients.some((selectedIngredient) =>
+        recipe.ingredients.some(
+          (recipeIngredient) =>
+            recipeIngredient.ingredient.toLowerCase() ===
+            selectedIngredient.toLowerCase()
         )
-    );
+      );
+    }
 
-    const { ingredients, appliances, ustensils } = advancedFilters;
+    let hasAppliance = true;
+    if (appliances.length) {
+      hasAppliance = appliances.some(
+        (selectedAppliance) =>
+          recipe.appliance.toLowerCase() === selectedAppliance.toLowerCase()
+      );
+    }
 
-    if (ingredients.length || appliances.length || ustensils.length) {
-      console.log(ingredients, appliances, ustensils);
-      const uniqueRecipeIds = new Set();
+    let hasUstensils = true;
+    if (ustensils.length) {
+      hasUstensils = ustensils.some((selectedUtensil) =>
+        recipe.ustensils.some(
+          (recipeUtensil) =>
+            recipeUtensil.toLowerCase() === selectedUtensil.toLowerCase()
+        )
+      );
+    }
 
-      filteredRecipes = filteredRecipes.filter((recipe) => {
-        const hasIngredients = ingredients.some((selectedIngredient) =>
-          recipe.ingredients.some(
-            (recipeIngredient) =>
-              recipeIngredient.ingredient.toLowerCase() ===
-              selectedIngredient.toLowerCase()
-          )
-        );
-        if (!hasIngredients) {
-          return true;
-        }
+    if (hasIngredients && hasAppliance && hasUstensils) {
+      filteredRecipes.push(recipe);
+    }
+  });
+  return filteredRecipes;
+}
 
-        
-        const hasAppliance = appliances.some(
-          (selectedAppliance) =>
-            recipe.appliance.toLowerCase() === selectedAppliance.toLowerCase()
-        );
-        if (!hasAppliance) {
-          return true;
-        }
-
-        const hasUstensils = ustensils.some((selectedUtensil) =>
-          recipe.ustensils.some(
-            (recipeUtensil) =>
-              recipeUtensil.toLowerCase() === selectedUtensil.toLowerCase()
-          )
-        );
-        if (!hasUstensils) {
-          return true;
-        }
-
-        const isUnique = uniqueRecipeIds.has(recipe.id);
-        if (!isUnique) {
-          uniqueRecipeIds.add(recipe.id);
-        }
-
-        // si il n'y a pas de filtre selectionné, alors c'est vrai par defaut
-
-        return hasIngredients || hasAppliance || hasUstensils;
-      });
+async function filterRecipes(searchInput) {
+  if (searchInput.length > 2) {
+    let filteredRecipes = await filterWithSearchbar(searchInput);
+    if (
+      advancedFilters.ingredients.length ||
+      advancedFilters.appliances.length ||
+      advancedFilters.ustensils.length
+    ) {
+      filteredRecipes = await filterWithItems(filteredRecipes);
     }
 
     document.querySelector(".recipes").innerHTML = "";
@@ -198,7 +200,7 @@ function addFilter(elt, item) {
   advancedFilters[elt].push(item);
 }
 
-function removeFilter(advancedFilters, item) {
+function removeFilter(item) {
   for (const category in advancedFilters) {
     advancedFilters[category] = advancedFilters[category].filter(
       (filter) => filter !== item
@@ -244,7 +246,7 @@ function filterItems(element) {
         let searchInput = document
           .querySelector(".search-input")
           .value.toLowerCase();
-        await filterRecipes(searchInput, advancedFilters, true);
+        await filterRecipes(searchInput);
 
         filter
           .querySelector(".clear-filter")
@@ -252,11 +254,11 @@ function filterItems(element) {
             filter.dataset.click = 0;
             filter.remove();
 
-            removeFilter(advancedFilters, item);
+            removeFilter(item);
             let searchInput = document
               .querySelector(".search-input")
               .value.toLowerCase();
-            await filterRecipes(searchInput, advancedFilters, false);
+            await filterRecipes(searchInput);
           });
       }
     });
@@ -283,7 +285,7 @@ async function init() {
       let searchInput = document
         .querySelector(".search-input")
         .value.toLowerCase();
-      await filterRecipes(searchInput, advancedFilters, false);
+      await filterRecipes(searchInput);
     });
 
   mainSearchbar.querySelector(".clear-button").addEventListener("click", () => {
