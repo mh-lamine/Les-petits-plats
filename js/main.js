@@ -208,6 +208,48 @@ function removeFilter(item) {
   }
 }
 
+function clearInput(element, input, items) {
+  element.querySelector(".clear-button").addEventListener("click", () => {
+    input.value = "";
+    items.forEach((item) => {
+      let itemName = item.textContent.toLowerCase();
+      item.style.display = "block";
+    });
+  });
+}
+
+function clearFilter(filter, item) {
+  filter.querySelector(".clear-filter").addEventListener("click", async () => {
+    filter.dataset.click = 0;
+    filter.remove();
+
+    removeFilter(item);
+    let searchInput = document
+      .querySelector(".search-input")
+      .value.toLowerCase();
+    await filterRecipes(searchInput);
+  });
+}
+
+function selectFilter(filter, item, elt, selected) {
+  item.addEventListener("click", async () => {
+    let itemName = item.innerText;
+
+    if (filter.dataset.click == 0) {
+      selected.append(filter);
+      filter.dataset.click = 1;
+
+      addFilter(elt, itemName);
+      let searchInput = document
+        .querySelector(".search-input")
+        .value.toLowerCase();
+      await filterRecipes(searchInput);
+
+      clearFilter(filter, itemName);
+    }
+  });
+}
+
 function filterItems(element) {
   let input = element.querySelector("input");
   let items = element.querySelectorAll(".list-items li");
@@ -227,6 +269,8 @@ function filterItems(element) {
     });
   });
 
+  clearInput(element, input, items);
+
   items.forEach((item) => {
     let elt = element.classList[1];
     let selected = document.querySelector(".selected ." + elt);
@@ -235,41 +279,7 @@ function filterItems(element) {
     filter.dataset.click = 0;
     filter.innerHTML = `${item.innerText}<i class="fa-solid fa-xmark clear-filter"></i>`;
 
-    item.addEventListener("click", async () => {
-      item = item.innerText;
-
-      if (filter.dataset.click == 0) {
-        selected.append(filter);
-        filter.dataset.click = 1;
-
-        addFilter(elt, item);
-        let searchInput = document
-          .querySelector(".search-input")
-          .value.toLowerCase();
-        await filterRecipes(searchInput);
-
-        filter
-          .querySelector(".clear-filter")
-          .addEventListener("click", async () => {
-            filter.dataset.click = 0;
-            filter.remove();
-
-            removeFilter(item);
-            let searchInput = document
-              .querySelector(".search-input")
-              .value.toLowerCase();
-            await filterRecipes(searchInput);
-          });
-      }
-    });
-  });
-
-  element.querySelector(".clear-button").addEventListener("click", () => {
-    input.value = "";
-    items.forEach((item) => {
-      let itemName = item.textContent.toLowerCase();
-      item.style.display = "block";
-    });
+    selectFilter(filter, item, elt, selected);
   });
 }
 
@@ -314,5 +324,6 @@ async function init() {
 }
 
 let advancedFilters = { ingredients: [], appliances: [], ustensils: [] };
-
+// debug undefined advanced filter
+// fct de moins de 25 lignes
 init();
