@@ -1,73 +1,6 @@
-async function getRecipes() {
-  const response = await fetch("../assets/recipes.js");
-  const data = await response.json();
-  return data;
-}
-
-function maxLength(text, maxLength) {
-  let longText = document.querySelectorAll(text);
-
-  longText.forEach((element) => {
-    let text = element.textContent;
-
-    if (text.length > maxLength) {
-      element.textContent = text.substring(0, maxLength) + "...";
-    }
-  });
-}
-
-function filterListItems(recipes) {
-  let ingredients = document.querySelectorAll(".ingredients .list-items li");
-  let appliances = document.querySelectorAll(".appliances .list-items li");
-  let ustensils = document.querySelectorAll(".ustensils .list-items li");
-
-  ingredients.forEach((ingredient) => {
-    let ingredientName = ingredient.textContent.toLowerCase();
-
-    let show = recipes.some((recipe) =>
-      recipe.ingredients.some(
-        (recipeIngredient) =>
-          recipeIngredient.ingredient.toLowerCase() === ingredientName
-      )
-    );
-
-    if (show) {
-      ingredient.classList.remove("hidden");
-    } else {
-      ingredient.classList.add("hidden");
-    }
-  });
-
-  appliances.forEach((appliance) => {
-    let applianceName = appliance.textContent.toLowerCase();
-
-    let show = recipes.some(
-      (recipe) => recipe.appliance.toLowerCase() === applianceName
-    );
-
-    if (show) {
-      appliance.classList.remove("hidden");
-    } else {
-      appliance.classList.add("hidden");
-    }
-  });
-
-  ustensils.forEach((utensil) => {
-    let utensilName = utensil.textContent.toLowerCase();
-
-    let show = recipes.some((recipe) =>
-      recipe.ustensils.some(
-        (recipeUtensil) => recipeUtensil.toLowerCase() === utensilName
-      )
-    );
-
-    if (show) {
-      utensil.classList.remove("hidden");
-    } else {
-      utensil.classList.add("hidden");
-    }
-  });
-}
+import { getRecipes } from "./getRecipes.js";
+import { maxLength } from "./maxLength.js";
+import { filterListItems } from "./filterListItems.js";
 
 async function filterWithSearchbar(searchInput) {
   let recipes = await getRecipes();
@@ -151,7 +84,7 @@ function displayRecipes(recipes) {
   }
 
   recipes.forEach((recipe) => {
-    path = `/images/Photos/${recipe.image}`;
+    let path = `/images/Photos/${recipe.image}`;
     let article = document.createElement("article");
     article.innerHTML = `<img src="${path}"/>
         <div>
@@ -196,10 +129,6 @@ function displayListItems(element) {
   }
 }
 
-function addFilter(elt, item) {
-  advancedFilters[elt].push(item);
-}
-
 function removeFilter(item) {
   for (const category in advancedFilters) {
     advancedFilters[category] = advancedFilters[category].filter(
@@ -208,11 +137,30 @@ function removeFilter(item) {
   }
 }
 
+function selectFilter(filter, item, elt, selected) {
+  item.addEventListener("click", async () => {
+    let itemName = item.innerText;
+
+    if (filter.dataset.click == 0) {
+      selected.append(filter);
+      filter.dataset.click = 1;
+
+      advancedFilters[elt].push(itemName);
+      let searchInput = document
+        .querySelector(".search-input")
+        .value.toLowerCase();
+      await filterRecipes(searchInput);
+
+      clearFilter(filter, itemName);
+    }
+  });
+}
+
+//FIXME: clearInput returns every item to the list instead of the ones that match the search and recipes
 function clearInput(element, input, items) {
   element.querySelector(".clear-button").addEventListener("click", () => {
     input.value = "";
     items.forEach((item) => {
-      let itemName = item.textContent.toLowerCase();
       item.style.display = "block";
     });
   });
@@ -231,25 +179,7 @@ function clearFilter(filter, item) {
   });
 }
 
-function selectFilter(filter, item, elt, selected) {
-  item.addEventListener("click", async () => {
-    let itemName = item.innerText;
-
-    if (filter.dataset.click == 0) {
-      selected.append(filter);
-      filter.dataset.click = 1;
-
-      addFilter(elt, itemName);
-      let searchInput = document
-        .querySelector(".search-input")
-        .value.toLowerCase();
-      await filterRecipes(searchInput);
-
-      clearFilter(filter, itemName);
-    }
-  });
-}
-
+// filters items with searchbar input
 function filterItems(element) {
   let input = element.querySelector("input");
   let items = element.querySelectorAll(".list-items li");
@@ -268,8 +198,6 @@ function filterItems(element) {
       }
     });
   });
-
-  clearInput(element, input, items);
 
   items.forEach((item) => {
     let elt = element.classList[1];
@@ -324,6 +252,5 @@ async function init() {
 }
 
 let advancedFilters = { ingredients: [], appliances: [], ustensils: [] };
-// debug undefined advanced filter
-// fct de moins de 25 lignes
+
 init();
