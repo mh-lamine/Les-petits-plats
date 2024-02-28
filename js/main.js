@@ -129,30 +129,51 @@ function displayListItems(element) {
   }
 }
 
-function removeFilter(item) {
-  for (const category in advancedFilters) {
-    advancedFilters[category] = advancedFilters[category].filter(
-      (filter) => filter !== item
-    );
-  }
+function createFilterTags(category) {
+  let itemCategory = category.classList[1];
+  let items = document.querySelectorAll(`.${itemCategory} .list-items li`);
+  items.forEach((item) => {
+    let filter = document.createElement("p");
+    filter.className = "filter";
+    filter.innerHTML = `${item.innerText}<i class="fa-solid fa-xmark clear-filter"></i>`;
+    filter.dataset.click = 0;
+    selectFilterTag(filter, item, itemCategory);
+    clearFilterTag(filter, item);
+  });
 }
 
-function selectFilter(filter, item, elt, selected) {
+function selectFilterTag(filter, item, category) {
   item.addEventListener("click", async () => {
     let itemName = item.innerText;
 
     if (filter.dataset.click == 0) {
-      selected.append(filter);
+      document.querySelector(".selected ." + category).append(filter);
       filter.dataset.click = 1;
 
-      advancedFilters[elt].push(itemName);
+      advancedFilters[category].push(itemName);
       let searchInput = document
         .querySelector(".search-input")
         .value.toLowerCase();
       await filterRecipes(searchInput);
-
-      clearFilter(filter, itemName);
     }
+  });
+}
+
+function clearFilterTag(filter, item) {
+  filter.querySelector(".clear-filter").addEventListener("click", async () => {
+    filter.dataset.click = 0;
+    filter.remove();
+
+    for (const category in advancedFilters) {
+      advancedFilters[category] = advancedFilters[category].filter(
+        (filter) => filter !== item.innerText
+      );
+    }
+
+    let searchInput = document
+      .querySelector(".search-input")
+      .value.toLowerCase();
+    await filterRecipes(searchInput);
   });
 }
 
@@ -163,51 +184,6 @@ function clearInput(element, input, items) {
     items.forEach((item) => {
       item.style.display = "block";
     });
-  });
-}
-
-function clearFilter(filter, item) {
-  filter.querySelector(".clear-filter").addEventListener("click", async () => {
-    filter.dataset.click = 0;
-    filter.remove();
-
-    removeFilter(item);
-    let searchInput = document
-      .querySelector(".search-input")
-      .value.toLowerCase();
-    await filterRecipes(searchInput);
-  });
-}
-
-// filters items with searchbar input
-function filterItems(element) {
-  let input = element.querySelector("input");
-  let items = element.querySelectorAll(".list-items li");
-
-  input.addEventListener("input", () => {
-    let search = input.value.toLowerCase();
-
-    items.forEach((item) => {
-      let itemName = item.textContent.toLowerCase();
-      let show = itemName.includes(search);
-
-      if (show) {
-        item.classList.remove("hidden");
-      } else {
-        item.classList.add("hidden");
-      }
-    });
-  });
-
-  items.forEach((item) => {
-    let elt = element.classList[1];
-    let selected = document.querySelector(".selected ." + elt);
-    let filter = document.createElement("p");
-    filter.className = "filter";
-    filter.dataset.click = 0;
-    filter.innerHTML = `${item.innerText}<i class="fa-solid fa-xmark clear-filter"></i>`;
-
-    selectFilter(filter, item, elt, selected);
   });
 }
 
@@ -236,19 +212,19 @@ async function init() {
   ingredients.querySelector("button").addEventListener("click", () => {
     displayListItems(ingredients);
   });
-  filterItems(ingredients);
+  createFilterTags(ingredients);
 
   let appliances = document.querySelector(".appliances");
   appliances.querySelector("button").addEventListener("click", () => {
     displayListItems(appliances);
   });
-  filterItems(appliances);
+  createFilterTags(appliances);
 
   let ustensils = document.querySelector(".ustensils");
   ustensils.querySelector("button").addEventListener("click", () => {
     displayListItems(ustensils);
   });
-  filterItems(ustensils);
+  createFilterTags(ustensils);
 }
 
 let advancedFilters = { ingredients: [], appliances: [], ustensils: [] };
