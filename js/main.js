@@ -1,6 +1,7 @@
 import { getRecipes } from "./getRecipes.js";
 import { maxLength } from "./maxLength.js";
 import { filterListItems } from "./filterListItems.js";
+import { updateTagsList } from "./updateTagsList.js";
 
 async function filterWithSearchbar(searchInput) {
   let recipes = await getRecipes();
@@ -41,10 +42,10 @@ async function filterWithItems(recipes) {
 
     let hasUstensils = true;
     if (ustensils.length) {
-      hasUstensils = ustensils.some((selectedUtensil) =>
+      hasUstensils = ustensils.some((selectedUstensil) =>
         recipe.ustensils.some(
-          (recipeUtensil) =>
-            recipeUtensil.toLowerCase() === selectedUtensil.toLowerCase()
+          (recipeUstensil) =>
+            recipeUstensil.toLowerCase() === selectedUstensil.toLowerCase()
         )
       );
     }
@@ -69,7 +70,7 @@ async function filterRecipes(searchInput) {
 
     document.querySelector(".recipes").innerHTML = "";
     displayRecipes(filteredRecipes);
-    filterListItems(filteredRecipes);
+    updateTagsList(filteredRecipes);
   }
 }
 
@@ -177,16 +178,6 @@ function clearFilterTag(filter, item) {
   });
 }
 
-//FIXME: clearInput returns every item to the list instead of the ones that match the search and recipes
-function clearInput(element, input, items) {
-  element.querySelector(".clear-button").addEventListener("click", () => {
-    input.value = "";
-    items.forEach((item) => {
-      item.style.display = "block";
-    });
-  });
-}
-
 async function init() {
   let recipes = await getRecipes();
   displayRecipes(recipes);
@@ -225,6 +216,8 @@ async function init() {
     displayListItems(ustensils);
   });
   createFilterTags(ustensils);
+
+  filterListItems();
 }
 
 let advancedFilters = { ingredients: [], appliances: [], ustensils: [] };
