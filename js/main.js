@@ -155,6 +155,13 @@ function selectFilterTag(filter, item, category) {
       document.querySelector(".selected ." + category).append(filter);
       filter.dataset.click = 1;
 
+      document.querySelector(`.${category} .list-items`).style.display = "none";
+      document.querySelector(`.${category} input`).value = "";
+      document.querySelector(`.${category} .clear-button`).style.display =
+        "none";
+      document.querySelector(`.${category} .arrow`).style.transform =
+        "rotate(0deg)";
+
       advancedFilters[category].push(itemName);
       let searchInput = document
         .querySelector(".search-input")

@@ -25,6 +25,7 @@ function filterListItems() {
       items.forEach((item) => {
         item.style.display = "block";
       });
+      listItem.querySelector(".clear-button").style.display = "none";
     });
   });
 }
