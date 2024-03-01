@@ -3,9 +3,8 @@ import { maxLength } from "./maxLength.js";
 import { filterListItems } from "./filterListItems.js";
 import { updateTagsList } from "./updateTagsList.js";
 
-async function filterWithSearchbar(searchInput) {
-  let recipes = await getRecipes();
-
+async function filterWithSearchbar(searchInput, recipes) {
+  if (searchInput.length < 3) return recipes;
   let filteredRecipes = recipes.filter(
     (recipe) =>
       recipe.name.toLowerCase().includes(searchInput.toLowerCase()) ||
@@ -57,21 +56,21 @@ async function filterWithItems(recipes) {
   return filteredRecipes;
 }
 
-async function filterRecipes(searchInput) {
-  if (searchInput.length > 2) {
-    let filteredRecipes = await filterWithSearchbar(searchInput);
-    if (
-      advancedFilters.ingredients.length ||
-      advancedFilters.appliances.length ||
-      advancedFilters.ustensils.length
-    ) {
-      filteredRecipes = await filterWithItems(filteredRecipes);
-    }
-
-    document.querySelector(".recipes").innerHTML = "";
-    displayRecipes(filteredRecipes);
-    updateTagsList(filteredRecipes);
+async function filterRecipes() {
+  let recipes = await getRecipes();
+  let searchInput = document.querySelector(".search-input").value.toLowerCase();
+  let filteredRecipes = await filterWithSearchbar(searchInput, recipes);
+  if (
+    advancedFilters.ingredients.length ||
+    advancedFilters.appliances.length ||
+    advancedFilters.ustensils.length
+  ) {
+    filteredRecipes = await filterWithItems(filteredRecipes);
   }
+
+  document.querySelector(".recipes").innerHTML = "";
+  displayRecipes(filteredRecipes);
+  updateTagsList(filteredRecipes);
 }
 
 function displayRecipes(recipes) {
@@ -163,10 +162,7 @@ function selectFilterTag(filter, item, category) {
         "rotate(0deg)";
 
       advancedFilters[category].push(itemName);
-      let searchInput = document
-        .querySelector(".search-input")
-        .value.toLowerCase();
-      await filterRecipes(searchInput);
+      await filterRecipes();
     }
   });
 }
@@ -182,10 +178,7 @@ function clearFilterTag(filter, item) {
       );
     }
 
-    let searchInput = document
-      .querySelector(".search-input")
-      .value.toLowerCase();
-    await filterRecipes(searchInput);
+    await filterRecipes();
   });
 }
 
@@ -198,10 +191,7 @@ async function init() {
   mainSearchbar
     .querySelector(".search-button")
     .addEventListener("click", async () => {
-      let searchInput = document
-        .querySelector(".search-input")
-        .value.toLowerCase();
-      await filterRecipes(searchInput);
+      await filterRecipes();
     });
 
   mainSearchbar.querySelector(".clear-button").addEventListener("click", () => {
