@@ -1,254 +1,252 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500&display=swap");
 
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Anton', sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Anton", sans-serif;
 }
 
-body{
-    background-color: #E5E5E5;
-
+body {
+  background-color: #e5e5e5;
 }
 
-header{
-    background-image:url(../images/bg-img.png);
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    width: 100vw;
-    height: 85vh;
+header {
+  background-image: url(../images/bg-img.png);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 85vh;
 }
 
-.logo{
-    margin: 3em 4em;
+.logo {
+  margin: 3em 4em;
 }
 
-.tagline{
-    width: 50vw;
-    margin: 15vh auto 0;
-    color: #FFD15B;
-    font-size: 44px;
-    text-align: center;
-
+.tagline {
+  width: 50vw;
+  margin: 15vh auto 0;
+  color: #ffd15b;
+  font-size: 44px;
+  text-align: center;
 }
 
-.main-searchbar{
+.main-searchbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  border-radius: 1em;
+  width: 65vw;
+  height: 4.5em;
+  margin: 1.5em auto;
+}
+
+.main-searchbar input {
+  width: 100%;
+  margin-left: 3em;
+  height: 3em;
+  border: none;
+  font-family: "Manrope", sans-serif;
+}
+
+input:focus {
+  outline: none;
+}
+
+.main-searchbar .clear-button {
+  color: #7a7a7a;
+  font-size: 13px;
+  padding: 0.5em;
+}
+
+.main-searchbar .search-button {
+  text-align: center;
+  padding-top: 9px;
+  font-size: 2em;
+  color: white;
+  background: black;
+  border-radius: 0.3em;
+  height: 1.6em;
+  width: 7%;
+  margin: 10px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  margin: 1em 3em;
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.selection,
+.selected {
+  display: grid;
+  gap: 1em;
+  grid-template-columns: repeat(3, 10em);
+}
+
+.list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  background-color: #fff;
+  height: fit-content;
+  overflow: hidden;
+}
+
+.list button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: none;
+  font-family: "Manrope", sans-serif;
+  font-weight: 400;
+  background-color: inherit;
+  padding: 10px;
+}
+
+.list span {
+  font-family: "Manrope", sans-serif;
+  font-weight: 500;
+}
+
+.arrow {
+  transition: 0.3s;
+}
+
+.list-items {
+  display: none;
+}
+
+.list-items .searchbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #7a7a7a;
+  border-radius: 2px;
+  padding: 0;
+  margin: 10px;
+}
+
+.list-items input {
+  border: none;
+  font-family: "Manrope", sans-serif;
+  width: 100%;
+  font-weight: 400;
+  font-size: 14px;
+  padding: 0.3em;
+}
+
+.list-items .clear-button {
+  display: none;
+  padding: 0.5em;
+}
+
+.list-items li {
+  list-style: none;
+  font-family: "Manrope", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  padding: 5px 10px;
+}
+
+.list-items li:hover {
+  background-color: #ffd15b;
+}
+
+.selected {
+  margin: 4em 3em 2em;
+
+  & .filter {
+    font-family: "Manrope", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    padding: 1em;
+    margin: 1em 0;
+    background-color: #ffd15b;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: white;
-    border-radius: 1em;
-    width: 65vw;
-    height: 4.5em;
-    margin: 1.5em auto;
-
+  }
 }
 
-.main-searchbar input{
-    width: 100%;
-    margin-left: 3em;
-    height: 3em;
-    border: none;
-    font-family: 'Manrope', sans-serif;
-}
+.recipes {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2em;
+  width: 100%;
+  padding: 0 3em;
 
-input:focus{
-    outline: none;
-}
-
-.main-searchbar .clear-button{
-    color: #7A7A7A;
-    font-size: 13px;
-    padding: .5em;
-}
-
-.main-searchbar .search-button{
-    text-align: center;
-    padding-top: 9px;
-    font-size: 2em;
-    color: white;
-    background: black;
-    border-radius: .3em;
-    height: 1.6em;
-    width: 7%;
-    margin: 10px;
-}
-
-main{
-    display: flex;
-    flex-direction: column;
-}
-
-.filters{
-    display: flex;
-    justify-content: space-between;
-    margin: 1em 3em;
-    position: absolute;
-    left: 0;
-    right: 0;
-}
- 
-
-.selection, .selected{
-    display: grid;
-    gap: 1em;
-    grid-template-columns:repeat(3, 10em);
-}
-
-.list{
-    width: 100%;
+  & article {
     display: flex;
     flex-direction: column;
     border-radius: 10px;
-    background-color: #fff;
-    height: fit-content;
     overflow: hidden;
-}
 
-.list button{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    border: none;
-    font-family: 'Manrope', sans-serif;
-    font-weight: 400;
-    background-color: inherit;
-    padding: 10px;
-}
-
-.list span{
-    font-family: 'Manrope', sans-serif;
-    font-weight: 500;
-}
-
-.arrow{
-    transition: .3s;
-}
-
-.list-items{
-    display: none;
-}
-
-.list-items .searchbar{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #7A7A7A;
-    border-radius: 2px;
-    padding: 0;
-    margin: 10px;
-}
-
-.list-items input{
-    border: none;
-    font-family: 'Manrope', sans-serif;
-    width: 100%;
-    font-weight: 400;
-    font-size: 14px;
-    padding: .3em;
-}
-
-.list-items .clear-button{
-    padding: .5em;
-}
-
-.list-items li{
-    list-style: none;
-    font-family: 'Manrope', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    padding: 5px 10px;
-}
-
-.list-items li:hover{
-    background-color: #FFD15B;
-}
-
-.selected{
-    margin: 4em 3em 2em;
-
-    & .filter{
-        font-family: 'Manrope', sans-serif;
-        font-weight: 400;
-        font-size: 14px;
-        padding: 1em;
-        margin: 1em 0;
-        background-color: #FFD15B;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    & img {
+      width: 100%;
+      object-fit: cover;
+      aspect-ratio: 3/2;
     }
-}
 
-.recipes{
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 2em;
-    width: 100%;
-    padding: 0 3em;
-    
-    & article{
-        display: flex;
-        flex-direction: column;
-        border-radius: 10px;
-        overflow: hidden;
-        
-        & img{
-            width: 100%;
-            object-fit: cover;
-            aspect-ratio: 3/2;
+    & div {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      height: 33em;
+      background-color: #fff;
+      padding: 1em;
+
+      & h4 {
+        font-family: "Manrope", sans-serif;
+        color: #7a7a7a;
+      }
+
+      & p {
+        font-family: "Manrope", sans-serif;
+      }
+
+      & ul {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1em;
+        & li {
+          display: flex;
+          flex-direction: column;
+          font-family: "Manrope", sans-serif;
+
+          & span {
+            font-family: "Manrope", sans-serif;
+            color: #7a7a7a;
+          }
         }
-        
-        & div{
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            height: 33em;
-            background-color: #fff;
-            padding: 1em;
-            
-            & h4{
-                font-family: 'Manrope', sans-serif;
-                color: #7A7A7A;
-            }
-
-            & p{
-                font-family: 'Manrope', sans-serif;
-            }
-
-            & ul{
-                list-style: none;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 1em;
-                & li{
-                    display: flex;
-                    flex-direction: column;
-                    font-family: 'Manrope', sans-serif;
-
-                    & span{
-                        font-family: 'Manrope', sans-serif;
-                        color: #7A7A7A;
-                    }
-                }
-            }
-        }
+      }
     }
+  }
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
-.no-recipe{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Manrope', sans-serif;
-    font-size: 14px;
-    color: #7A7A7A;
+.no-recipe {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Manrope", sans-serif;
+  font-size: 14px;
+  color: #7a7a7a;
 }

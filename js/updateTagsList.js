@@ -15,6 +15,8 @@ function updateTagsList(recipes) {
 
     if (!isPartOfRecipes) {
       ingredient.classList.add("hidden");
+    } else {
+      ingredient.classList.remove("hidden");
     }
   });
 
@@ -27,6 +29,8 @@ function updateTagsList(recipes) {
 
     if (!isPartOfRecipes) {
       appliance.classList.add("hidden");
+    } else {
+      appliance.classList.remove("hidden");
     }
   });
 
@@ -39,6 +43,8 @@ function updateTagsList(recipes) {
     );
     if (!isPartOfRecipes) {
       ustensil.classList.add("hidden");
+    } else {
+      ustensil.classList.remove("hidden");
     }
   });
 }

@@ -112,6 +112,10 @@ function displayRecipes(recipes) {
         </div>`;
     maxLength(".recipe-description", 200);
     recipeSection.append(article);
+
+    document.querySelector(".filters p").innerText = `${
+      recipes.length !== 50 ? recipes.length : "1500"
+    } recettes`;
   });
 }
 
