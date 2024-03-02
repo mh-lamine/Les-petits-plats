@@ -22,7 +22,7 @@ async function filterWithItems(recipes) {
   recipes.forEach((recipe) => {
     let hasIngredients = true;
     if (ingredients.length) {
-      hasIngredients = ingredients.some((selectedIngredient) =>
+      hasIngredients = ingredients.every((selectedIngredient) =>
         recipe.ingredients.some(
           (recipeIngredient) =>
             recipeIngredient.ingredient.toLowerCase() ===
@@ -197,7 +197,7 @@ async function init() {
   mainSearchbar.querySelector(".clear-button").addEventListener("click", () => {
     mainSearchbar.querySelector("input").value = "";
     document.querySelector(".recipes").innerHTML = "";
-    displayRecipes(recipes);
+    filterRecipes();
   });
 
   let ingredients = document.querySelector(".ingredients");
