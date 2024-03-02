@@ -5,54 +5,92 @@ import { updateTagsList } from "./updateTagsList.js";
 
 async function filterWithSearchbar(searchInput, recipes) {
   if (searchInput.length < 3) return recipes;
-  let filteredRecipes = recipes.filter(
-    (recipe) =>
+  let filteredRecipes = [];
+  for (let i = 0; i < recipes.length; i++) {
+    let recipe = recipes[i];
+    if (
       recipe.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-      recipe.description.toLowerCase().includes(searchInput.toLowerCase()) ||
-      recipe.ingredients.some((ingredient) =>
-        ingredient.ingredient.toLowerCase().includes(searchInput.toLowerCase())
-      )
-  );
+      recipe.description.toLowerCase().includes(searchInput.toLowerCase())
+    ) {
+      filteredRecipes.push(recipe);
+    } else {
+      for (let j = 0; j < recipe.ingredients.length; j++) {
+        if (
+          recipe.ingredients[j].ingredient
+            .toLowerCase()
+            .includes(searchInput.toLowerCase())
+        ) {
+          filteredRecipes.push(recipe);
+          break;
+        }
+      }
+    }
+  }
   return filteredRecipes;
 }
 
 async function filterWithItems(recipes) {
   const { ingredients, appliances, ustensils } = advancedFilters;
   let filteredRecipes = [];
-  recipes.forEach((recipe) => {
+  for (let i = 0; i < recipes.length; i++) {
+    let recipe = recipes[i];
     let hasIngredients = true;
     if (ingredients.length) {
-      hasIngredients = ingredients.every((selectedIngredient) =>
-        recipe.ingredients.some(
-          (recipeIngredient) =>
-            recipeIngredient.ingredient.toLowerCase() ===
-            selectedIngredient.toLowerCase()
-        )
-      );
+      for (let j = 0; j < ingredients.length; j++) {
+        let ingredientFound = false;
+        for (let k = 0; k < recipe.ingredients.length; k++) {
+          if (
+            recipe.ingredients[k].ingredient.toLowerCase() ===
+            ingredients[j].toLowerCase()
+          ) {
+            ingredientFound = true;
+            break;
+          }
+        }
+        if (!ingredientFound) {
+          hasIngredients = false;
+          break;
+        }
+      }
     }
 
     let hasAppliance = true;
     if (appliances.length) {
-      hasAppliance = appliances.some(
-        (selectedAppliance) =>
-          recipe.appliance.toLowerCase() === selectedAppliance.toLowerCase()
-      );
+      let applianceFound = false;
+      for (let j = 0; j < appliances.length; j++) {
+        if (recipe.appliance.toLowerCase() === appliances[j].toLowerCase()) {
+          applianceFound = true;
+          break;
+        }
+      }
+      if (!applianceFound) {
+        hasAppliance = false;
+      }
     }
 
     let hasUstensils = true;
     if (ustensils.length) {
-      hasUstensils = ustensils.some((selectedUstensil) =>
-        recipe.ustensils.some(
-          (recipeUstensil) =>
-            recipeUstensil.toLowerCase() === selectedUstensil.toLowerCase()
-        )
-      );
+      for (let j = 0; j < ustensils.length; j++) {
+        let ustensilFound = false;
+        for (let k = 0; k < recipe.ustensils.length; k++) {
+          if (
+            recipe.ustensils[k].toLowerCase() === ustensils[j].toLowerCase()
+          ) {
+            ustensilFound = true;
+            break;
+          }
+        }
+        if (!ustensilFound) {
+          hasUstensils = false;
+          break;
+        }
+      }
     }
 
     if (hasIngredients && hasAppliance && hasUstensils) {
       filteredRecipes.push(recipe);
     }
-  });
+  }
   return filteredRecipes;
 }
 
