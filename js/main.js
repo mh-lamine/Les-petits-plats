@@ -82,6 +82,9 @@ function displayRecipes(recipes) {
   if (!recipes.length) {
     let searchInput = document.querySelector(".search-input").value;
     errorMessage.innerHTML = `Aucune recette ne contient "${searchInput}" vous pouvez chercher « tarte aux pommes », « poisson », etc.`;
+    document.querySelector(
+      ".nb-de-recettes"
+    ).innerText = `${recipes.length} recettes`;
   }
 
   recipes.forEach((recipe) => {
@@ -206,10 +209,23 @@ async function init() {
   let mainSearchbar = document.querySelector(".main-searchbar");
 
   mainSearchbar
-    .querySelector(".search-button")
-    .addEventListener("click", async () => {
-      await filterRecipes();
+    .querySelector("input")
+    .addEventListener("input", async () => {
+      if (mainSearchbar.querySelector("input").value.length >= 3) {
+        await filterRecipes();
+      } else {
+        document.querySelector(".recipes").innerHTML = "";
+        displayRecipes(recipes);
+        updateTagsList(recipes);
+      }
+      if (mainSearchbar.querySelector("input").value.length) {
+        mainSearchbar.querySelector(".clear-button").style.display = "block";
+      } else {
+        mainSearchbar.querySelector(".clear-button").style.display = "none";
+      }
     });
+
+  
 
   mainSearchbar.querySelector(".clear-button").addEventListener("click", () => {
     mainSearchbar.querySelector("input").value = "";

@@ -1,8 +1,4 @@
 Attention au nommage des livrables
 
-La barre de recherche principal doit lancer la recherche a partir de 3 caractères (pas après un click)
-
-Retirer la croix du champs de recherche quand celui-ci est vide
-
 
 Ces retours sont à faire pour les 2 branches !
