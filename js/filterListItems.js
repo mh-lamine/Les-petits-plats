@@ -1,31 +1,32 @@
 function filterListItems() {
   let listItems = document.querySelectorAll(".list-items");
 
-  listItems.forEach((listItem) => {
-    listItem.querySelector("input").addEventListener("input", () => {
-      listItem.querySelector(".clear-button").style.display = `${
-        listItem.querySelector("input").value ? "block" : "none"
-      }`;
-      let items = listItem.querySelectorAll("li:not(.hidden)");
-      let search = listItem.querySelector("input").value.toLowerCase();
-      items.forEach((item) => {
-        let itemName = item.textContent.toLowerCase();
-        let show = itemName.includes(search);
+  listItems.forEach((item) => {
+    let listItemInput = item.querySelector("input");
+    let itemsList = item.querySelectorAll(".items-list li:not(.hidden)");
 
+    listItemInput.addEventListener("input", () => {
+      item.querySelector(".clear-button").style.display = `${
+        listItemInput.value ? "block" : "none"
+      }`;
+      let search = listItemInput.value.toLowerCase();
+
+      itemsList.forEach((ListElement) => {
+        let itemName = ListElement.innerText.toLowerCase();
+        let show = itemName.includes(search);
         if (!show) {
-          item.style.display = "none";
+          ListElement.classList.add("more-hidden");
         } else {
-          item.style.display = "block";
+          ListElement.classList.remove("more-hidden");
         }
       });
     });
-    listItem.querySelector(".clear-button").addEventListener("click", () => {
-      listItem.querySelector("input").value = "";
-      let items = listItem.querySelectorAll("li:not(.hidden)");
-      items.forEach((item) => {
-        item.style.display = "block";
+    item.querySelector(".clear-button").addEventListener("click", () => {
+      listItemInput.value = "";
+      itemsList.forEach((item) => {
+        item.classList.remove("more-hidden");
       });
-      listItem.querySelector(".clear-button").style.display = "none";
+      item.querySelector(".clear-button").style.display = "none";
     });
   });
 }
