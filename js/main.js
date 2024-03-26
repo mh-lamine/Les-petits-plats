@@ -2,6 +2,7 @@ import { getRecipes } from "./getRecipes.js";
 import { maxLength } from "./maxLength.js";
 import { filterListItems } from "./filterListItems.js";
 import { updateTagsList } from "./updateTagsList.js";
+import { createItemsList } from "./createItemsList.js";
 
 async function filterWithSearchbar(searchInput, recipes) {
   if (searchInput.length < 3) return recipes;
@@ -119,6 +120,9 @@ function displayRecipes(recipes) {
   if (!recipes.length) {
     let searchInput = document.querySelector(".search-input").value;
     errorMessage.innerHTML = `Aucune recette ne contient "${searchInput}" vous pouvez chercher « tarte aux pommes », « poisson », etc.`;
+    document.querySelector(
+      ".nb-de-recettes"
+    ).innerText = `${recipes.length} recettes`;
   }
 
   recipes.forEach((recipe) => {
@@ -150,9 +154,9 @@ function displayRecipes(recipes) {
     maxLength(".recipe-description", 200);
     recipeSection.append(article);
 
-    document.querySelector(".filters p").innerText = `${
-      recipes.length !== 50 ? recipes.length : "1500"
-    } recettes`;
+    document.querySelector(
+      ".nb-de-recettes"
+    ).innerText = `${recipes.length} recettes`;
   });
 }
 
@@ -178,44 +182,59 @@ function createFilterTags(category) {
     let filter = document.createElement("p");
     filter.className = "filter";
     filter.innerHTML = `${item.innerText}<i class="fa-solid fa-xmark clear-filter"></i>`;
-    filter.dataset.click = 0;
     selectFilterTag(filter, item, itemCategory);
     clearFilterTag(filter, item);
   });
 }
 
 function selectFilterTag(filter, item, category) {
-  item.addEventListener("click", async () => {
+  item.querySelector("span").addEventListener("click", async () => {
     let itemName = item.innerText;
 
-    if (filter.dataset.click == 0) {
-      document.querySelector(".selected ." + category).append(filter);
-      filter.dataset.click = 1;
+    document.querySelector(".selected ." + category).append(filter);
 
-      document.querySelector(`.${category} .list-items`).style.display = "none";
-      document.querySelector(`.${category} input`).value = "";
-      document.querySelector(`.${category} .clear-button`).style.display =
-        "none";
-      document.querySelector(`.${category} .arrow`).style.transform =
-        "rotate(0deg)";
+    // document.querySelectorAll(".items-list").forEach((itemsList) => {
+    //   let items = itemsList.querySelectorAll("li:not(.hidden)");
+    //   items.forEach((item) => {
+    //     item.style.display = "block";
+    //   });
+    // });
 
-      advancedFilters[category].push(itemName);
-      await filterRecipes();
-    }
+    document.querySelector(`.${category} .list-items`).style.display = "none";
+    // document.querySelector(`.${category} input`).value = "";
+    // document.querySelector(`.${category} .clear-button`).style.display = "none";
+    document.querySelector(`.${category} .clear-button`).click();
+    document.querySelector(`.${category} .arrow`).style.transform =
+      "rotate(0deg)";
+    document.querySelector(`.${category} .active-section`).appendChild(item);
+    advancedFilters[category].push(itemName);
+    await filterRecipes();
   });
+}
+
+function removeFilterTag(filter, item) {
+  for (const category in advancedFilters) {
+    advancedFilters[category] = advancedFilters[category].filter(
+      (filter) => filter !== item.innerText
+    );
+  }
+  
+  item.parentElement.parentElement.querySelector(".items-list").append(item);
+  filter.remove();
+  
+  const list = item.parentElement;
+  [...list.children]
+    .sort((a, b) => (a.innerText > b.innerText ? 1 : -1))
+    .forEach((node) => list.appendChild(node));
 }
 
 function clearFilterTag(filter, item) {
   filter.querySelector(".clear-filter").addEventListener("click", async () => {
-    filter.dataset.click = 0;
-    filter.remove();
-
-    for (const category in advancedFilters) {
-      advancedFilters[category] = advancedFilters[category].filter(
-        (filter) => filter !== item.innerText
-      );
-    }
-
+    removeFilterTag(filter, item);
+    await filterRecipes();
+  });
+  item.querySelector(".clear-filter").addEventListener("click", async () => {
+    removeFilterTag(filter, item);
     await filterRecipes();
   });
 }
@@ -223,14 +242,28 @@ function clearFilterTag(filter, item) {
 async function init() {
   let recipes = await getRecipes();
   displayRecipes(recipes);
+  createItemsList(recipes);
 
   let mainSearchbar = document.querySelector(".main-searchbar");
 
   mainSearchbar
-    .querySelector(".search-button")
-    .addEventListener("click", async () => {
-      await filterRecipes();
+    .querySelector("input")
+    .addEventListener("input", async () => {
+      if (mainSearchbar.querySelector("input").value.length >= 3) {
+        await filterRecipes();
+      } else {
+        document.querySelector(".recipes").innerHTML = "";
+        displayRecipes(recipes);
+        updateTagsList(recipes);
+      }
+      if (mainSearchbar.querySelector("input").value.length) {
+        mainSearchbar.querySelector(".clear-button").style.display = "block";
+      } else {
+        mainSearchbar.querySelector(".clear-button").style.display = "none";
+      }
     });
+
+  
 
   mainSearchbar.querySelector(".clear-button").addEventListener("click", () => {
     mainSearchbar.querySelector("input").value = "";

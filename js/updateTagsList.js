@@ -1,17 +1,17 @@
 function updateTagsList(recipes) {
-  let ingredients = document.querySelectorAll(".ingredients .list-items li");
-  let appliances = document.querySelectorAll(".appliances .list-items li");
-  let ustensils = document.querySelectorAll(".ustensils .list-items li");
+  let ingredients = document.querySelectorAll(".ingredients .items-list li");
+  let appliances = document.querySelectorAll(".appliances .items-list li");
+  let ustensils = document.querySelectorAll(".ustensils .items-list li");
 
   ingredients.forEach((ingredient) => {
     let itemName = ingredient.textContent.toLowerCase();
-
+    
     let isPartOfRecipes = recipes.some((recipe) =>
-      recipe.ingredients.some(
-        (recipeIngredient) =>
-          recipeIngredient.ingredient.toLowerCase() === itemName
+    recipe.ingredients.some(
+      (recipeIngredient) =>
+      recipeIngredient.ingredient.toLowerCase() === itemName
       )
-    );
+      );
 
     if (!isPartOfRecipes) {
       ingredient.classList.add("hidden");
